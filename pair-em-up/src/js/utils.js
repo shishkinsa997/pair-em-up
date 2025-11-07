@@ -10,4 +10,16 @@ function el(tag, options = {}) {
   return e;
 }
 
-export { el };
+function computeRows(gridLength) {
+  return Math.ceil(gridLength / 9);
+}
+
+function formatMs(ms) {
+  const total = Math.floor(ms / 1000);
+  const mm = String(Math.floor(total / 60)).padStart(2, "0");
+  const ss = String(total % 60).padStart(2, "0");
+  return `${mm}:${ss}`;
+}
+
+
+export { el, computeRows, formatMs };
