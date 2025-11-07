@@ -79,7 +79,9 @@ export function buildUI(root) {
     className: "mode__title",
     text: "Classic",
   });
+  const gameGrid = el("div", { className: "game__grid" });
 
+  // hud
   const hud = el("div", { className: "hud" });
   const currentScore = el("p", {
     className: "current__score",
@@ -92,8 +94,7 @@ export function buildUI(root) {
   });
   hud.append(currentScore, timer);
 
-  const gameGrid = el("div", { className: "game__grid" });
-
+  // controls
   const controls = el("div", {
     className: "controls",
   });
@@ -114,6 +115,7 @@ export function buildUI(root) {
   });
   controls.append(restartBtn, saveBtn, continueBtn);
 
+  // helpers
   const helpers = el("div", {
     className: "helpers",
   });
@@ -167,6 +169,85 @@ export function buildUI(root) {
   helpers.append(hintsBtn, revertBtn, addNumbersBtn, shuffleBtn, eraserBtn);
 
   gameScreen.append(modeTitle, hud, gameGrid, controls, helpers, settingsBtn);
+
+  // result modal
+  const resultModal = el("div", {
+    className: "result__modal",
+    attrs: { hidden: "" },
+  });
+  const resultText = el("p", { className: "result__text", text: "" });
+  const resultScore = el("p", { className: "result__score", text: "" });
+  const playAgain = el("button", {
+    className: "play__again",
+    attrs: { type: "button" },
+    text: "Play Again",
+  });
+  const toMenu = el("button", {
+    className: "to__menu",
+    attrs: { type: "button" },
+    text: "Main Menu",
+  });
+  resultModal.append(resultText, resultScore, playAgain, toMenu);
+
+  // statistics modal
+  const statModal = el("div", {
+    className: "stat__modal",
+    attrs: { hidden: "" },
+  });
+  const statTitle = el("h2", {
+    className: "stat__title",
+    text: "Latest 5 games (fastest first)",
+  });
+  const statList = el("ol", {
+    className: "stat__list",
+  });
+  const closeStat = el("button", {
+    className: "close__stat",
+    attrs: { type: "button" },
+    text: "Close",
+  });
+  statModal.append(statTitle, statList, closeStat);
+
+  // settings modal
+  const settingsModal = el("div", {
+    className: "settings__modal",
+    attrs: { hidden: "" },
+  });
+  const themeLabel = el("label", {
+    text: "Theme: ",
+  });
+  const themeSelect = el("select", {
+    id: "theme",
+  });
+  const themeLight = el("option", {
+    attrs: { value: "light" },
+    text: "Light",
+  });
+  const themeDark = el("option", {
+    attrs: { value: "dark" },
+    text: "Dark",
+  });
+  themeSelect.append(themeLight, themeDark);
+  
+  const soundLabel = el("label", {
+    text: "Sound: ",
+  });
+  const soundToggle = el("input", {
+    attrs: { type: "checkbox" },
+  });
+  const settingsSave = el("button", {
+    text: "Save",
+    attrs: { type: "button" },
+  });
+  const settingsClose = el("button", {
+    text: "Close",
+    attrs: { type: "button" },
+  });
+  themeLabel.append(themeSelect);
+  soundLabel.append(soundToggle);
+  settingsModal.append(themeLabel, soundLabel, settingsSave, settingsClose);
+
+  app.append(settingsModal, resultModal, statModal);
 
   app.append(startScreen, gameScreen);
   root.appendChild(app);
