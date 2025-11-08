@@ -1,0 +1,34 @@
+$color-primary: #94d6e8;
+$color-light: #F7F5F2;
+$color-dark: #39393A;
+$color-black: #222;
+$color-white: #fff;
+$color-secondary: #fd9282;
+$color-primary-op: #94d6e850;
+
+$btn-color: #565656;
+$shadows-btn: 0.6rem 0.6rem 1rem #1c1c1c, -0.6rem -0.6rem 1rem #2f2f2f;
+$shadows-btn-hover: 0.8rem 0.8rem 1.8rem #121212, -0.8rem -0.8rem 1.8rem #303030;
+
+$mobile_s: 380px;
+$mobile_m: 560px;
+$mobile_l: 670px;
+$tablet_s: 768px;
+$tablet_m: 820px;
+$tablet_l: 880px;
+$laptop_s: 1000px;
+$laptop_m: 1120px;
+$laptop_l: 1280px;
+$desktop: 1440px;
+
+$breakpoints: (
+  mobile_s: 380px,
+  mobile_m: 480px,
+  mobile_l: 380px,
+  tablet_s: 768px,
+  tablet_m: 768px,
+  tablet_l: 900px,
+  laptop: 1024px,
+  widelaptop: 1280px,
+  desktop: 1440px,
+);

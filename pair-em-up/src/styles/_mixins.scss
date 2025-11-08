@@ -1,0 +1,79 @@
+@use "_variables.scss" as v;
+
+@mixin flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@mixin flex-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+@mixin flex-column {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+@mixin container {
+  max-width: 1440px;
+  margin: 0 auto;
+}
+
+@mixin outfit {
+  font-family: "Outfit", sans-serif;
+  font-weight: 400;
+}
+
+@mixin frame {
+  @include flex-center;
+  flex-wrap: wrap;
+  padding: 1rem;
+  border-radius: 1rem;
+  gap: 1rem;
+  background-color: v.$color-dark;
+}
+
+@mixin button {
+  border-radius: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.1rem;
+  text-align: center;
+  background-color: v.$btn-color;
+  cursor: pointer;
+  color: v.$color-white;
+  padding: 1rem 2rem;
+  transition: box-shadow ease-in-out 0.3s, background-color ease-in-out 0.1s,
+    letter-spacing ease-in-out 0.1s, transform ease-in-out 0.5s;
+  box-shadow: v.$shadows-btn;
+
+  &:hover {
+    box-shadow: v.$shadows-btn-hover;
+    transform: scale(0.9);
+  }
+  &:active {
+    box-shadow: v.$shadows-btn-hover, v.$color-primary 0 0 1.5rem 0.25rem;
+    background-color: v.$color-primary;
+    transform: scale(0.95);
+  }
+}
+
+@mixin icon-btn {
+  display: grid;
+  place-items: center;
+  background-color: v.$btn-color;
+  padding: 1.4rem;
+  border-radius: 1rem;
+  box-shadow: v.$shadows-btn;
+  cursor: pointer;
+  transition: all 0.5s;
+
+  &:hover {
+      transform: scale(0.9);
+      box-shadow: v.$shadows-btn-hover;
+  }
+}
