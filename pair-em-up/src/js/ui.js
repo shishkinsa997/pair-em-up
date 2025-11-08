@@ -1,5 +1,7 @@
-import { el } from "./utils.js";
-
+import { el, formatMs } from "./utils.js";
+import { state, GAME_MODES } from "./constants.js";
+import { initGame } from "./game.js";
+import { startTimer, stopTimer } from "./timer.js";
 export function buildUI(root) {
   const app = el("div", { id: "app" });
 
@@ -113,7 +115,12 @@ export function buildUI(root) {
     attrs: { type: "button" },
     text: "Continue",
   });
-  controls.append(restartBtn, saveBtn, continueBtn);
+  const resultBtn = el("button", {
+    className: "stat",
+    attrs: { type: "button" },
+    text: "Results",
+  });
+  controls.append(restartBtn, saveBtn, continueBtn, resultBtn);
 
   // helpers
   const helpers = el("div", {
@@ -219,16 +226,19 @@ export function buildUI(root) {
   const themeSelect = el("select", {
     id: "theme",
   });
-  const themeLight = el("option", {
-    attrs: { value: "light" },
-    text: "Light",
-  });
-  const themeDark = el("option", {
-    attrs: { value: "dark" },
-    text: "Dark",
-  });
-  themeSelect.append(themeLight, themeDark);
-  
+  themeSelect.append(
+    el("option", {
+      attrs: { value: "light" },
+      text: "Light",
+    }),
+  );
+  themeSelect.append(
+    el("option", {
+      attrs: { value: "dark" },
+      text: "Dark",
+    }),
+  );
+
   const soundLabel = el("label", {
     text: "Sound: ",
   });
@@ -253,4 +263,160 @@ export function buildUI(root) {
   root.appendChild(app);
 
   // ux
+  function renderGrid() {
+    gameGrid.textContent = "";
+    const total = state.grid.length;
+    const grid = el("div", {
+      className: "cells",
+      attrs: {
+        role: "grid",
+        style: "display:grid;grid-template-columns:repeat(9,1fr);",
+      },
+    });
+    for (let i = 0; i < total; i++) {
+      const val = state.grid[i] ?? null;
+
+      const btn = el("button", {
+        className: "cell",
+        attrs: {
+          "data-index": String(i),
+          role: "gridcell",
+          "aria-selected": state.selectedIndices.includes(i) ? "true" : "false",
+          "aria-label": val != null ? `Cell ${val}` : "Empty cell",
+        },
+        text: val != null ? String(val) : "",
+      });
+
+      if (val == null) btn.setAttribute("disabled", "");
+      if (state.selectedIndices.includes(i))
+        btn.classList.add("cell--selected");
+      grid.appendChild(btn);
+    }
+    gameGrid.appendChild(grid);
+  }
+
+  function showStart() {
+    stopTimer();
+    startScreen.removeAttribute("hidden");
+    gameScreen.setAttribute("hidden", "");
+  }
+  function showGame() {
+    startScreen.setAttribute("hidden", "");
+    gameScreen.removeAttribute("hidden");
+    startTimer();
+    renderGrid();
+  }
+
+  // settings handlers
+  applyTheme(themeSelect.value);
+
+  settingsBtn.addEventListener("click", () => {
+    settingsModal.toggleAttribute("hidden");
+  });
+  settingsClose.addEventListener("click", () => {
+    settingsModal.setAttribute("hidden", "");
+  });
+  settingsSave.addEventListener("click", () => {
+    const s = { theme: themeSelect.value, sound: !!soundToggle.checked };
+    applyTheme(s.theme);
+    settingsModal.setAttribute("hidden", "");
+  });
+
+  function applyTheme(theme) {
+    document.documentElement.setAttribute("data-theme", theme);
+  }
+
+  // buttons
+  classicBtn.addEventListener("click", () => {
+    initGame(state, GAME_MODES.CLASSIC);
+    showGame();
+  });
+  randomBtn.addEventListener("click", () => {
+    initGame(state, GAME_MODES.RANDOM);
+    showGame();
+  });
+  chaoticBtn.addEventListener("click", () => {
+    initGame(state, GAME_MODES.CHAOTIC);
+    showGame();
+  });
+  continueGameBtn.addEventListener("click", () => {
+    const saved = null;
+    if (!saved) return;
+    state.mode = saved.mode;
+    state.grid = saved.grid;
+    state.rows = Math.ceil(state.grid.length / 9);
+    state.score = saved.score;
+    state.targetScore = saved.targetScore;
+    state.timerMs = saved.timerMs || 0;
+    state.assists = saved.assists || state.assists;
+    state.movesMade = saved.movesMade || 0;
+    state.selectedIndices = [];
+    showGame();
+  });
+
+  restartBtn.addEventListener("click", () => {
+    initGame(state, state.mode);
+    showGame();
+  });
+  saveBtn.addEventListener("click", () => {
+
+  });
+  continueGameBtn.addEventListener("click", () => {
+    const saved = null;
+    if (!saved) return;
+    state.mode = saved.mode;
+    state.grid = saved.grid;
+    state.rows = Math.ceil(state.grid.length / 9);
+    state.score = saved.score;
+    state.targetScore = saved.targetScore;
+    state.timerMs = saved.timerMs || 0;
+    state.assists = saved.assists || state.assists;
+    state.movesMade = saved.movesMade || 0;
+    state.selectedIndices = [];
+    renderGrid();
+  });
+
+  scoreBtn.addEventListener("click", () => {
+    renderResults();
+    statModal.removeAttribute("hidden");
+  });
+  closeStat.addEventListener("click", () => {
+    statModal.setAttribute("hidden", "");
+  });
+  playAgain.addEventListener("click", () => {
+    resultModal.setAttribute("hidden", "");
+    initGame(state, state.mode);
+    showGame();
+  });
+  toMenu.addEventListener("click", () => {
+    resultModal.setAttribute("hidden", "");
+    showStart();
+  });
+
+  resultBtn.addEventListener("click", () => {
+    endGame(true);
+  });
+
+  function endGame(win) {
+    stopTimer();
+    state.running = false;
+    resultText.textContent = win ? "You Win!" : "You Lose";
+    resultScore.textContent = `Score: ${state.score} • Time: ${formatMs(state.timerMs)}`;
+    resultModal.removeAttribute("hidden");
+  }
+
+  function renderResults() {
+    const list = null;
+    statList.textContent = "";
+    list.forEach((r) => {
+      const li = el("li", {
+        html: `<strong>${r.win ? "Win" : "Loss"}</strong> • ${r.mode} • ${formatMs(r.timeMs)} • ${r.score} pts`,
+      });
+      statList.appendChild(li);
+    });
+    if (list.length === 0)
+      statList.appendChild(el("li", { text: "No games yet" }));
+  }
+
+  showStart();
 }

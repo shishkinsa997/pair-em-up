@@ -21,5 +21,4 @@ function formatMs(ms) {
   return `${mm}:${ss}`;
 }
 
-
 export { el, computeRows, formatMs };
