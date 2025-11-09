@@ -1,15 +1,25 @@
 import { GAME_MODES, ASSIST_LIMITS } from "./constants";
+import {
+  countValidMoves,
+} from "./gameHelpers";
 import { computeRows } from "./utils";
 
 function generateInitialNumbers(mode) {
   if (mode === GAME_MODES.CLASSIC || mode === GAME_MODES.RANDOM) {
-    const base = [];
-    for (let i = 1; i <= 9; i += 1) base.push(i);
-    for (let i = 1; i <= 9; i += 1) base.push(i);
+    const rawBase = [];
+    for (let i = 1; i <= 27; i += 1) rawBase.push(i);
+    rawBase.filter((x) => x % 10 !== 0);
+    const base = rawBase.filter((x) => x % 10 !== 0).flatMap((num) => num.toString().split("").map(Number));
+    let b = 81 - base.length;
+    if (b <= 0) {
+      b = 9 - (base.length - 9 * Math.floor(base.length / 9));
+    }
+    for (let i = 1; i <= b; i += 1) base.push(null);
     return base;
   }
   const arr = [];
   for (let i = 0; i < 27; i += 1) arr.push(1 + Math.floor(Math.random() * 9));
+  for (let i = 0; i < 9; i += 1) arr.push(null);
   return arr;
 }
 
@@ -104,10 +114,34 @@ function applyPair(state, aIdx, bIdx) {
   return true;
 }
 
+function hasAnyMovesLeft(state) {
+  return countValidMoves(state) > 0;
+}
+
+function hasAssistsLeft(state) {
+  return (
+    state.assists.addNumbersUsed < ASSIST_LIMITS.addNumbers ||
+    state.assists.shuffleUsed < ASSIST_LIMITS.shuffle ||
+    state.assists.eraserUsed < ASSIST_LIMITS.eraser
+  );
+}
+
+function checkWin(state) {
+  return state.score >= state.targetScore;
+}
+
+function checkLose(state) {
+  if (state.rows >= 50) return true;
+  if (!hasAnyMovesLeft(state) && !hasAssistsLeft(state)) return true;
+  return false;
+}
+
 export {
   GAME_MODES,
   ASSIST_LIMITS,
   initGame,
   isPairValid,
   applyPair,
+  checkWin,
+  checkLose,
 };

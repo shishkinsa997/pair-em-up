@@ -1,10 +1,12 @@
 import { el, formatMs } from "./utils.js";
-import { state } from "./constants.js";
+import { state, iconBtnSize } from "./constants.js";
 import {
   GAME_MODES,
   initGame,
   isPairValid,
   applyPair,
+  checkWin,
+  checkLose,
 } from "./game.js";
 import {
   saveToLocalStorage,
@@ -31,6 +33,18 @@ export function buildUI(root) {
     text: "Pair 'em Up is a strategic number-matching puzzle game where players must clear a grid by finding and removing valid pairs of numbers.",
   });
 
+  const continueGameBtn = el("button", {
+    className: "continue btn",
+    attrs: { type: "button" },
+    text: "Continue Game",
+  });
+  const newGameContainer = el("div", {
+    className: "new-game-container",
+  })
+  const newGameTitle = el("p", {
+    className: "new-game-title",
+    text: "New Game",
+  })
   const modeSection = el("div", {
     className: "mode-section",
   });
@@ -49,12 +63,9 @@ export function buildUI(root) {
     attrs: { type: "button" },
     text: "Chaotic",
   });
+  newGameContainer.append(newGameTitle,modeSection)
+  modeSection.append(classicBtn, randomBtn, chaoticBtn);
 
-  const continueGameBtn = el("button", {
-    className: "continue btn",
-    attrs: { type: "button" },
-    text: "Continue",
-  });
   const startFooter = el("div", {
     className: "start-footer",
   });
@@ -66,8 +77,8 @@ export function buildUI(root) {
     },
     html: `
     <svg
-      width="3rem"
-      height="3rem"
+      width="${iconBtnSize}"
+      height="${iconBtnSize}"
       fill="#0092E4"
       xmlns="http://www.w3.org/2000/svg"
       data-name="github-logo"
@@ -81,8 +92,8 @@ export function buildUI(root) {
     html: `
     <svg
       fill="#0092E4"
-      width="3rem"
-      height="3rem"
+      width="${iconBtnSize}"
+      height="${iconBtnSize}"
       viewBox="0 0 32 32"
       id="icon"
       xmlns="http://www.w3.org/2000/svg">
@@ -105,8 +116,8 @@ export function buildUI(root) {
     html: `
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        width="3rem" viewBox="0 0 20 20"
-        height="3rem" fill="none"
+        width="${iconBtnSize}" viewBox="0 0 20 20"
+        height="${iconBtnSize}" fill="none"
         class="svg-icon">
         <g
           stroke-width="1.5"
@@ -120,13 +131,12 @@ export function buildUI(root) {
       </svg>`,
   });
 
-  modeSection.append(classicBtn, randomBtn, chaoticBtn);
   startFooter.append(github, scoreBtn, settingsBtn);
   startScreen.append(
     startTitle,
     startSubtutle,
     continueGameBtn,
-    modeSection,
+    newGameContainer,
     startFooter,
   );
   startScreen.appendChild(settingsBtn);
@@ -470,6 +480,8 @@ export function buildUI(root) {
           sel.length = 0;
           renderGrid();
           updateHud();
+          if (checkWin(state)) endGame(true);
+          else if (checkLose(state)) endGame(false);
           return;
         }
       }
