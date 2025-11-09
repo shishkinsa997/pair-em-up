@@ -4,8 +4,16 @@ import {
   GAME_MODES,
   initGame,
   isPairValid,
-  applyPair
+  applyPair,
 } from "./game.js";
+import {
+  saveToLocalStorage,
+  loadFromLocalStorage,
+  saveSettings,
+  loadSettings,
+  saveResult,
+  loadResults,
+} from "./store.js";
 import { startTimer, stopTimer } from "./timer.js";
 export function buildUI(root) {
   const app = el("div", { id: "app" });
@@ -286,14 +294,14 @@ export function buildUI(root) {
   });
   themeSelect.append(
     el("option", {
-      attrs: { value: "light" },
-      text: "Light",
+      attrs: { value: "dark" },
+      text: "Dark",
     }),
   );
   themeSelect.append(
     el("option", {
-      attrs: { value: "dark" },
-      text: "Dark",
+      attrs: { value: "light" },
+      text: "Light",
     }),
   );
 
@@ -384,11 +392,35 @@ export function buildUI(root) {
     gameGrid.appendChild(grid);
   }
 
+  function updateHud() {
+    currentScore.textContent = `Current Score: ${state.score}`;
+    modeTitle.textContent =
+      state.mode.charAt(0).toUpperCase() + state.mode.slice(1);
+    const addLeft = Math.max(0, 10 - state.assists.addNumbersUsed);
+    const shLeft = Math.max(0, 5 - state.assists.shuffleUsed);
+    const erLeft = Math.max(0, 5 - state.assists.eraserUsed);
+    addNumbersCounter.textContent = String(addLeft);
+    shuffleCounter.textContent = String(shLeft);
+    eraserCounter.textContent = String(erLeft);
+    if (addLeft === 0) addNumbersBtn.setAttribute("disabled", "");
+    else addNumbersBtn.removeAttribute("disabled");
+    if (shLeft === 0) shuffleBtn.setAttribute("disabled", "");
+    else shuffleBtn.removeAttribute("disabled");
+    if (erLeft === 0) eraserBtn.setAttribute("disabled", "");
+    else eraserBtn.removeAttribute("disabled");
+  }
+
   function showStart() {
     stopTimer();
     startFooter.append(settingsBtn);
     startScreen.removeAttribute("hidden");
     gameScreen.setAttribute("hidden", "");
+    const saved = loadFromLocalStorage();
+    if (saved) {
+      continueGameBtn.removeAttribute("disabled");
+    } else {
+      continueGameBtn.setAttribute("disabled", "");
+    }
   }
   function showGame() {
     gameScreen.appendChild(settingsBtn);
@@ -396,10 +428,14 @@ export function buildUI(root) {
     gameScreen.removeAttribute("hidden");
     startTimer();
     renderGrid();
+    updateHud();
   }
 
   // settings handlers
-  applyTheme(themeSelect.value);
+  const currentSettings = loadSettings();
+  applyTheme(currentSettings.theme);
+  themeSelect.value = currentSettings.theme;
+  soundToggle.checked = !!currentSettings.sound;
 
   settingsBtn.addEventListener("click", () => {
     settingsModal.toggleAttribute("hidden");
@@ -409,10 +445,11 @@ export function buildUI(root) {
   });
   settingsSave.addEventListener("click", () => {
     const s = { theme: themeSelect.value, sound: !!soundToggle.checked };
+    saveSettings(s);
     applyTheme(s.theme);
     settingsModal.setAttribute("hidden", "");
   });
-
+  console.log(themeSelect.value);
   function applyTheme(theme) {
     document.documentElement.setAttribute("data-theme", theme);
   }
@@ -432,6 +469,7 @@ export function buildUI(root) {
         if (isPairValid(state, a, b) && applyPair(state, a, b)) {
           sel.length = 0;
           renderGrid();
+          updateHud();
           return;
         }
       }
@@ -453,7 +491,7 @@ export function buildUI(root) {
     showGame();
   });
   continueGameBtn.addEventListener("click", () => {
-    const saved = null;
+    const saved = loadFromLocalStorage();
     if (!saved) return;
     state.mode = saved.mode;
     state.grid = saved.grid;
@@ -472,10 +510,10 @@ export function buildUI(root) {
     showGame();
   });
   saveBtn.addEventListener("click", () => {
-
+    saveToLocalStorage(state);
   });
   continueGameBtn.addEventListener("click", () => {
-    const saved = null;
+    const saved = loadFromLocalStorage();
     if (!saved) return;
     state.mode = saved.mode;
     state.grid = saved.grid;
@@ -487,6 +525,7 @@ export function buildUI(root) {
     state.movesMade = saved.movesMade || 0;
     state.selectedIndices = [];
     renderGrid();
+    updateHud();
   });
 
   scoreBtn.addEventListener("click", () => {
@@ -516,10 +555,18 @@ export function buildUI(root) {
     resultText.textContent = win ? "You Win!" : "You Lose";
     resultScore.textContent = `Score: ${state.score} • Time: ${formatMs(state.timerMs)}`;
     resultModal.removeAttribute("hidden");
+    saveResult({
+      mode: state.mode,
+      score: state.score,
+      timeMs: state.timerMs,
+      win: !!win,
+      moves: state.movesMade,
+      at: Date.now(),
+    });
   }
 
   function renderResults() {
-    const list = null;
+    const list = loadResults();
     statList.textContent = "";
     list.forEach((r) => {
       const li = el("li", {
