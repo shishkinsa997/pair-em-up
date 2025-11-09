@@ -28,4 +28,6 @@ const state = {
   movesMade: 0,
 };
 
-export { state, GAME_MODES, ASSIST_LIMITS };
+const iconBtnSize = '2rem'
+
+export { state, GAME_MODES, ASSIST_LIMITS, iconBtnSize };
