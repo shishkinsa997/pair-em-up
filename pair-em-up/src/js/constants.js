@@ -29,5 +29,7 @@ const state = {
 };
 
 const iconBtnSize = '2rem'
+const hintBtnSize = '1.7rem'
+const hintBtnColor = '#fff'
 
-export { state, GAME_MODES, ASSIST_LIMITS, iconBtnSize };
+export { state, GAME_MODES, ASSIST_LIMITS, iconBtnSize, hintBtnSize, hintBtnColor };
