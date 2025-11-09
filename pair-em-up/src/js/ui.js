@@ -1,5 +1,5 @@
 import { el, formatMs } from "./utils.js";
-import { state, iconBtnSize } from "./constants.js";
+import { state, iconBtnSize, hintBtnSize, hintBtnColor } from "./constants.js";
 import {
   GAME_MODES,
   initGame,
@@ -16,6 +16,13 @@ import {
   saveResult,
   loadResults,
 } from "./store.js";
+import {
+  revertLastMove,
+  addNumbers,
+  eraseAt,
+  countValidMoves,
+  shuffleBoard,
+} from "./gameHelpers.js";
 import { startTimer, stopTimer } from "./timer.js";
 export function buildUI(root) {
   const app = el("div", { id: "app" });
@@ -139,7 +146,6 @@ export function buildUI(root) {
     newGameContainer,
     startFooter,
   );
-  startScreen.appendChild(settingsBtn);
 
   // game screen
   const gameScreen = el("main", {
@@ -189,12 +195,17 @@ export function buildUI(root) {
     attrs: { type: "button" },
     text: "Continue",
   });
+  const settingsGameBtn = el("button", {
+    className: "game__settings btn",
+    attrs: { type: "button" },
+    text: "Settings",
+  })
   const resultBtn = el("button", {
     className: "stat btn",
     attrs: { type: "button" },
     text: "Results",
   });
-  controls.append(restartBtn, saveBtn, continueBtn, resultBtn, settingsBtn);
+  controls.append(restartBtn, saveBtn, continueBtn, resultBtn, settingsGameBtn);
 
   // helpers
   const helpers = el("div", {
@@ -204,16 +215,37 @@ export function buildUI(root) {
     className: "hints btn",
     attrs: { type: "button" },
     text: "Hints",
+    html: `
+      <svg width="${hintBtnSize}" height="${hintBtnSize}" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M12 7C9.23858 7 7 9.23858 7 12C7 13.3613 7.54402 14.5955 8.42651 15.4972C8.77025 15.8484 9.05281 16.2663 9.14923 16.7482L9.67833 19.3924C9.86537 20.3272 10.6862 21 11.6395 21H12.3605C13.3138 21 14.1346 20.3272 14.3217 19.3924L14.8508 16.7482C14.9472 16.2663 15.2297 15.8484 15.5735 15.4972C16.456 14.5955 17 13.3613 17 12C17 9.23858 14.7614 7 12 7Z"
+      stroke="${hintBtnColor}" stroke-width="2"/>
+      <path d="M12 4V3" stroke="${hintBtnColor}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M18 6L19 5" stroke="${hintBtnColor}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M20 12H21" stroke="${hintBtnColor}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M4 12H3" stroke="${hintBtnColor}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M5 5L6 6" stroke="${hintBtnColor}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M10 17H14" stroke="${hintBtnColor}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>`
   });
   const revertBtn = el("button", {
     className: "revert btn",
     attrs: { type: "button" },
     text: "Revert",
+    html: `
+      <svg width="${hintBtnSize}" height="${hintBtnSize}" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M5.33929 4.46777H7.33929V7.02487C8.52931 6.08978 10.0299 5.53207 11.6607 5.53207C15.5267 5.53207 18.6607 8.66608 18.6607 12.5321C18.6607 16.3981 15.5267 19.5321 11.6607 19.5321C9.51025 19.5321 7.58625 18.5623 6.30219 17.0363L7.92151 15.8515C8.83741 16.8825 10.1732 17.5321 11.6607 17.5321C14.4222 17.5321 16.6607 15.2935 16.6607 12.5321C16.6607 9.77065 14.4222 7.53207 11.6607 7.53207C10.5739 7.53207 9.56805 7.87884 8.74779 8.46777L11.3393 8.46777V10.4678H5.33929V4.46777Z"
+        fill="${hintBtnColor}"/>
+      </svg>`
   });
   const addNumbersBtn = el("button", {
     className: "add-numbers btn",
     attrs: { type: "button" },
     text: "Add Numbers",
+    html: `
+      <svg width="${hintBtnSize}" height="${hintBtnSize}" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 4C11.4477 4 11 4.44772 11 5V11H5C4.44772 11 4 11.4477 4 12C4 12.5523 4.44772 13 5 13H11V19C11 19.5523 11.4477 20 12 20C12.5523 20 13 19.5523 13 19V13H19C19.5523 13 20 12.5523 20 12C20 11.4477 19.5523 11 19 11H13V5C13 4.44772 12.5523 4 12 4Z"
+        fill="${hintBtnColor}"/>
+      </svg>`,
   });
   const addNumbersCounter = el("span", {
     className: "btn__counter",
@@ -221,10 +253,15 @@ export function buildUI(root) {
   });
   addNumbersBtn.append(addNumbersCounter);
   const shuffleBtn = el("button", {
-    className: "shuffle btn",
+    className: "shuffle icon-btn",
     id: "shuffle",
     attrs: { type: "button" },
     text: "Shuffle",
+    html: `
+      <svg width="${hintBtnSize}" height="${hintBtnSize}" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M16.4697 9.46967C16.1768 9.76256 16.1768 10.2374 16.4697 10.5303C16.7626 10.8232 17.2374 10.8232 17.5303 10.5303L16.4697 9.46967ZM19.5303 8.53033C19.8232 8.23744 19.8232 7.76256 19.5303 7.46967C19.2374 7.17678 18.7626 7.17678 18.4697 7.46967L19.5303 8.53033ZM18.4697 8.53033C18.7626 8.82322 19.2374 8.82322 19.5303 8.53033C19.8232 8.23744 19.8232 7.76256 19.5303 7.46967L18.4697 8.53033ZM17.5303 5.46967C17.2374 5.17678 16.7626 5.17678 16.4697 5.46967C16.1768 5.76256 16.1768 6.23744 16.4697 6.53033L17.5303 5.46967ZM19 8.75C19.4142 8.75 19.75 8.41421 19.75 8C19.75 7.58579 19.4142 7.25 19 7.25V8.75ZM16.7 8L16.6993 8.75H16.7V8ZM12.518 10.252L13.1446 10.6642L13.1446 10.6642L12.518 10.252ZM10.7414 11.5878C10.5138 11.9338 10.6097 12.3989 10.9558 12.6266C11.3018 12.8542 11.7669 12.7583 11.9946 12.4122L10.7414 11.5878ZM11.9946 12.4122C12.2222 12.0662 12.1263 11.6011 11.7802 11.3734C11.4342 11.1458 10.9691 11.2417 10.7414 11.5878L11.9946 12.4122ZM10.218 13.748L9.59144 13.3358L9.59143 13.3358L10.218 13.748ZM6.041 16V16.75H6.04102L6.041 16ZM5 15.25C4.58579 15.25 4.25 15.5858 4.25 16C4.25 16.4142 4.58579 16.75 5 16.75V15.25ZM11.9946 11.5878C11.7669 11.2417 11.3018 11.1458 10.9558 11.3734C10.6097 11.6011 10.5138 12.0662 10.7414 12.4122L11.9946 11.5878ZM12.518 13.748L13.1446 13.3358L13.1446 13.3358L12.518 13.748ZM16.7 16V15.25H16.6993L16.7 16ZM19 16.75C19.4142 16.75 19.75 16.4142 19.75 16C19.75 15.5858 19.4142 15.25 19 15.25V16.75ZM10.7414 12.4122C10.9691 12.7583 11.4342 12.8542 11.7802 12.6266C12.1263 12.3989 12.2222 11.9338 11.9946 11.5878L10.7414 12.4122ZM10.218 10.252L9.59143 10.6642L9.59144 10.6642L10.218 10.252ZM6.041 8L6.04102 7.25H6.041V8ZM5 7.25C4.58579 7.25 4.25 7.58579 4.25 8C4.25 8.41421 4.58579 8.75 5 8.75V7.25ZM17.5303 13.4697C17.2374 13.1768 16.7626 13.1768 16.4697 13.4697C16.1768 13.7626 16.1768 14.2374 16.4697 14.5303L17.5303 13.4697ZM18.4697 16.5303C18.7626 16.8232 19.2374 16.8232 19.5303 16.5303C19.8232 16.2374 19.8232 15.7626 19.5303 15.4697L18.4697 16.5303ZM19.5303 16.5303C19.8232 16.2374 19.8232 15.7626 19.5303 15.4697C19.2374 15.1768 18.7626 15.1768 18.4697 15.4697L19.5303 16.5303ZM16.4697 17.4697C16.1768 17.7626 16.1768 18.2374 16.4697 18.5303C16.7626 18.8232 17.2374 18.8232 17.5303 18.5303L16.4697 17.4697ZM17.5303 10.5303L19.5303 8.53033L18.4697 7.46967L16.4697 9.46967L17.5303 10.5303ZM19.5303 7.46967L17.5303 5.46967L16.4697 6.53033L18.4697 8.53033L19.5303 7.46967ZM19 7.25H16.7V8.75H19V7.25ZM16.7007 7.25C14.7638 7.24812 12.956 8.22159 11.8914 9.8398L13.1446 10.6642C13.9314 9.46813 15.2676 8.74861 16.6993 8.75L16.7007 7.25ZM11.8914 9.83979L10.7414 11.5878L11.9946 12.4122L13.1446 10.6642L11.8914 9.83979ZM10.7414 11.5878L9.59144 13.3358L10.8446 14.1602L11.9946 12.4122L10.7414 11.5878ZM9.59143 13.3358C8.80541 14.5306 7.47115 15.25 6.04098 15.25L6.04102 16.75C7.97596 16.7499 9.78113 15.7767 10.8446 14.1602L9.59143 13.3358ZM6.041 15.25H5V16.75H6.041V15.25ZM10.7414 12.4122L11.8914 14.1602L13.1446 13.3358L11.9946 11.5878L10.7414 12.4122ZM11.8914 14.1602C12.956 15.7784 14.7638 16.7519 16.7007 16.75L16.6993 15.25C15.2676 15.2514 13.9314 14.5319 13.1446 13.3358L11.8914 14.1602ZM16.7 16.75H19V15.25H16.7V16.75ZM11.9946 11.5878L10.8446 9.83979L9.59144 10.6642L10.7414 12.4122L11.9946 11.5878ZM10.8446 9.8398C9.78113 8.2233 7.97596 7.25005 6.04102 7.25L6.04098 8.75C7.47115 8.75004 8.80541 9.46939 9.59143 10.6642L10.8446 9.8398ZM6.041 7.25H5V8.75H6.041V7.25ZM16.4697 14.5303L18.4697 16.5303L19.5303 15.4697L17.5303 13.4697L16.4697 14.5303ZM18.4697 15.4697L16.4697 17.4697L17.5303 18.5303L19.5303 16.5303L18.4697 15.4697Z"
+        fill="${hintBtnColor}"/>
+      </svg>`,
   });
   const shuffleCounter = el("span", {
     className: "btn__counter",
@@ -236,6 +273,11 @@ export function buildUI(root) {
     id: "eraser",
     attrs: { type: "button" },
     text: "Eraser",
+    html: `
+    <svg width="${hintBtnSize}" height="${hintBtnSize}" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path fill-rule="evenodd" clip-rule="evenodd" d="M3.49997 12.8995C2.71892 13.6805 2.71892 14.9468 3.49997 15.7279L7.35785 19.5858H4.08576C3.53347 19.5858 3.08576 20.0335 3.08576 20.5858C3.08576 21.1381 3.53347 21.5858 4.08576 21.5858H20.0858C20.638 21.5858 21.0858 21.1381 21.0858 20.5858C21.0858 20.0335 20.638 19.5858 20.0858 19.5858H10.9558L20.4705 10.071C21.2516 9.28999 21.2516 8.02366 20.4705 7.24261L16.2279 2.99997C15.4468 2.21892 14.1805 2.21892 13.3995 2.99997L3.49997 12.8995ZM7.82579 11.4021L4.91418 14.3137L9.15683 18.5563L12.0684 15.6447L7.82579 11.4021ZM9.24 9.98787L13.4826 14.2305L19.0563 8.65683L14.8137 4.41418L9.24 9.98787Z"
+      fill="${hintBtnColor}"/>
+    </svg>`
   });
   const eraserCounter = el("span", {
     className: "btn__counter",
@@ -249,8 +291,7 @@ export function buildUI(root) {
   hintsBtn.append(hintsCounter);
   helpers.append(hintsBtn, revertBtn, addNumbersBtn, shuffleBtn, eraserBtn);
 
-  gameContainer.append(modeTitle, hud, gameGrid, controls, helpers);
-  gameContainer.appendChild(settingsBtn);
+  gameContainer.append(modeTitle, hud, gameGrid, helpers, controls);
   gameScreen.append(gameContainer);
 
   // result modal
@@ -404,6 +445,9 @@ export function buildUI(root) {
 
   function updateHud() {
     currentScore.textContent = `Current Score: ${state.score}`;
+    // hints
+    const available = countValidMoves(state);
+    hintsCounter.textContent = String(available);
     modeTitle.textContent =
       state.mode.charAt(0).toUpperCase() + state.mode.slice(1);
     const addLeft = Math.max(0, 10 - state.assists.addNumbersUsed);
@@ -422,7 +466,6 @@ export function buildUI(root) {
 
   function showStart() {
     stopTimer();
-    startFooter.append(settingsBtn);
     startScreen.removeAttribute("hidden");
     gameScreen.setAttribute("hidden", "");
     const saved = loadFromLocalStorage();
@@ -433,7 +476,7 @@ export function buildUI(root) {
     }
   }
   function showGame() {
-    gameScreen.appendChild(settingsBtn);
+    continueBtn.classList.add("game__continue");
     startScreen.setAttribute("hidden", "");
     gameScreen.removeAttribute("hidden");
     startTimer();
@@ -538,6 +581,45 @@ export function buildUI(root) {
     state.selectedIndices = [];
     renderGrid();
     updateHud();
+  });
+
+  hintsBtn.addEventListener("click", () => {
+    updateHud();
+  });
+  revertBtn.addEventListener("click", () => {
+    if (revertLastMove(state)) {
+      renderGrid();
+      updateHud();
+    }
+  });
+  addNumbersBtn.addEventListener("click", () => {
+    if (addNumbers(state)) {
+      renderGrid();
+      updateHud();
+    }
+  });
+  shuffleBtn.addEventListener("click", () => {
+    if (shuffleBoard(state)) {
+      renderGrid();
+      updateHud();
+    }
+  });
+  eraserBtn.addEventListener("click", () => {
+    const handler = (e) => {
+      const elCell = e.target.closest(".cell");
+      if (!elCell) return;
+      const idx = Number(elCell.getAttribute("data-index"));
+      if (eraseAt(state, idx)) {
+        document.removeEventListener("click", handler, true);
+        renderGrid();
+        updateHud();
+      } else {
+        document.removeEventListener("click", handler, true);
+      }
+      e.preventDefault();
+      e.stopPropagation();
+    };
+    document.addEventListener("click", handler, true);
   });
 
   scoreBtn.addEventListener("click", () => {

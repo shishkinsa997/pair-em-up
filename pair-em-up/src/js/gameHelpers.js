@@ -1,4 +1,92 @@
+import { GAME_MODES, ASSIST_LIMITS } from "./constants";
+import { computeRows } from "./utils";
 import { isPairValid } from "./game";
+
+function shuffleArray(arr) {
+  for (let i = arr.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function shuffleBoard(state) {
+  if (state.assists.shuffleUsed >= ASSIST_LIMITS.shuffle) return false;
+  const values = state.grid.filter((x) => x != null);
+  const empties = state.grid.length - values.length;
+  shuffleArray(values);
+  state.grid = [...values, ...Array(empties).fill(null)];
+  state.assists.shuffleUsed += 1;
+  state.lastMove = { type: "shuffle" };
+  return true;
+}
+
+function revertLastMove(state) {
+  if (!state.lastMove) return false;
+  const { type } = state.lastMove;
+  if (type === "pair") {
+    const { aIdx, bIdx, a, b, prevScore } = state.lastMove;
+    state.grid[aIdx] = a;
+    state.grid[bIdx] = b;
+    state.score = prevScore;
+    state.lastMove = null;
+    return true;
+  }
+  return false;
+}
+
+function eraseAt(state, idx) {
+  if (state.assists.eraserUsed >= ASSIST_LIMITS.eraser) return false;
+  if (state.grid[idx] == null) return false;
+  const prev = state.grid[idx];
+  state.grid[idx] = null;
+  state.assists.eraserUsed += 1;
+  state.lastMove = { type: "erase", idx, prev };
+  return true;
+}
+
+function addNumbers(state) {
+  if (state.assists.addNumbersUsed >= ASSIST_LIMITS.addNumbers) return false;
+  const remaining = state.grid.filter((x) => x != null).length;
+  if (state.rows >= 50) return false;
+  let toAdd = [];
+  if (state.mode === GAME_MODES.CLASSIC) {
+    // continue sequential numbers after the highest existing sequence baseline
+    const existing = state.grid.filter((x) => x != null);
+    const maxVal = existing.length ? Math.max(...existing) : 0;
+    const start = Math.max(1, maxVal + 1);
+    const seq = [];
+    let v = start;
+    while (seq.length < remaining) {
+      seq.push(v);
+      v += 1;
+      if (v === 20) v = 1; // skip 0; wrap after 19 to keep digits 1..19
+    }
+    toAdd = seq;
+  } else if (state.mode === GAME_MODES.RANDOM) {
+    const nums = [];
+    const base = [];
+    for (let i = 1; i <= 19; i += 1) base.push(i);
+    for (let i = 1; i <= remaining - Math.min(remaining, 19); i += 1)
+      base.push((i % 19) + 1);
+    // ensure at least remaining length
+    while (nums.length < remaining) nums.push(base[nums.length % base.length]);
+    toAdd = shuffleArray(nums);
+  } else {
+    // CHAOTIC
+    for (let i = 0; i < remaining; i += 1)
+      toAdd.push(1 + Math.floor(Math.random() * 9));
+  }
+
+  const newGrid = state.grid.filter((x) => x != null); // compact without empties
+  newGrid.push(...toAdd);
+  if (computeRows(newGrid.length) > 50) return false;
+  state.grid = newGrid;
+  state.rows = computeRows(state.grid.length);
+  state.assists.addNumbersUsed += 1;
+  state.lastMove = { type: "addNumbers", count: toAdd.length };
+  return true;
+}
 
 function countValidMoves(state) {
   const filled = [];
@@ -14,4 +102,4 @@ function countValidMoves(state) {
   return cnt;
 }
 
-export { countValidMoves };
+export { shuffleArray, shuffleBoard, revertLastMove, addNumbers, eraseAt, countValidMoves };
