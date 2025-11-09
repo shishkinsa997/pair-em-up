@@ -26,4 +26,88 @@ function initGame(state, mode) {
   state.movesMade = 0;
 }
 
-export { GAME_MODES, ASSIST_LIMITS, initGame };
+function isPairValid(state, aIdx, bIdx) {
+  if (aIdx === bIdx) return false;
+  const a = state.grid[aIdx];
+  const b = state.grid[bIdx];
+  if (a == null || b == null) return false;
+  if (!areCellsConnectable(state, aIdx, bIdx)) return false;
+  if (a === b) return true;
+  if (a + b === 10) return true;
+  return false;
+}
+
+function areCellsConnectable(state, aIdx, bIdx) {
+  const cols = 9;
+  const ai = aIdx % cols;
+  const aj = Math.floor(aIdx / cols);
+  const bi = bIdx % cols;
+  const bj = Math.floor(bIdx / cols);
+
+  const adjacent = Math.abs(ai - bi) + Math.abs(aj - bj) === 1;
+  if (adjacent) return true;
+
+  // row
+  if (aj === bj) {
+    const from = Math.min(ai, bi) + 1;
+    const to = Math.max(ai, bi) - 1;
+    for (let c = from; c <= to; c += 1) {
+      const idx = aj * cols + c;
+      if (state.grid[idx] != null) return false;
+    }
+    return true;
+  }
+
+  // column
+  if (ai === bi) {
+    const from = Math.min(aj, bj) + 1;
+    const to = Math.max(aj, bj) - 1;
+    for (let r = from; r <= to; r += 1) {
+      const idx = r * cols + ai;
+      if (state.grid[idx] != null) return false;
+    }
+    return true;
+  }
+
+  // next row
+  const isRowBoundaryPair = ai === cols - 1 && bi === 0 && bj === aj + 1;
+  const isRowBoundaryPairReverse = bi === cols - 1 && ai === 0 && aj === bj + 1;
+  if (isRowBoundaryPair || isRowBoundaryPairReverse) return true;
+
+  return false;
+}
+
+function scorePair(a, b) {
+  if (a === 5 && b === 5) return 3;
+  if (a === b) return 1;
+  if (a + b === 10) return 2;
+  return 0;
+}
+
+function applyPair(state, aIdx, bIdx) {
+  const a = state.grid[aIdx];
+  const b = state.grid[bIdx];
+  const points = scorePair(a, b);
+  if (points === 0) return false;
+  state.lastMove = {
+    type: "pair",
+    aIdx,
+    bIdx,
+    a,
+    b,
+    prevScore: state.score,
+  };
+  state.grid[aIdx] = null;
+  state.grid[bIdx] = null;
+  state.score += points;
+  state.movesMade += 1;
+  return true;
+}
+
+export {
+  GAME_MODES,
+  ASSIST_LIMITS,
+  initGame,
+  isPairValid,
+  applyPair,
+};

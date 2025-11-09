@@ -3,6 +3,8 @@ import { state } from "./constants.js";
 import {
   GAME_MODES,
   initGame,
+  isPairValid,
+  applyPair
 } from "./game.js";
 import { startTimer, stopTimer } from "./timer.js";
 export function buildUI(root) {
@@ -56,8 +58,8 @@ export function buildUI(root) {
     },
     html: `
     <svg
-      width="5rem"
-      height="5rem"
+      width="3rem"
+      height="3rem"
       fill="#0092E4"
       xmlns="http://www.w3.org/2000/svg"
       data-name="github-logo"
@@ -71,8 +73,8 @@ export function buildUI(root) {
     html: `
     <svg
       fill="#0092E4"
-      width="5rem"
-      height="5rem"
+      width="3rem"
+      height="3rem"
       viewBox="0 0 32 32"
       id="icon"
       xmlns="http://www.w3.org/2000/svg">
@@ -95,8 +97,8 @@ export function buildUI(root) {
     html: `
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        width="5rem" viewBox="0 0 20 20"
-        height="5rem" fill="none"
+        width="3rem" viewBox="0 0 20 20"
+        height="3rem" fill="none"
         class="svg-icon">
         <g
           stroke-width="1.5"
@@ -298,9 +300,31 @@ export function buildUI(root) {
   const soundLabel = el("label", {
     text: "Sound: ",
   });
-  const soundToggle = el("input", {
-    attrs: { type: "checkbox" },
+  const soundToggle = el("div", {
+    className: "settings__sound",
   });
+  const soundInput = el("input", {
+    attrs: { type: "checkbox", checked: "checked" },
+  });
+  const soundMark = el("div", {
+    className: "settings__sound-mark",
+  });
+  soundToggle.append(soundInput, soundMark);
+
+  const themeLabelm = el("label", {
+    text: "Sound: ",
+  });
+  const themeToggle = el("div", {
+    className: "settings__sound",
+  });
+  const themeInput = el("input", {
+    attrs: { type: "checkbox", checked: "checked" },
+  });
+  const themeMark = el("div", {
+    className: "settings__sound-mark",
+  });
+  themeToggle.append(themeInput, themeMark);
+
   const settingsSave = el("button", {
     className: "settings__save btn",
     text: "Save",
@@ -313,7 +337,14 @@ export function buildUI(root) {
   });
   themeLabel.append(themeSelect);
   soundLabel.append(soundToggle);
-  settingsModal.append(themeLabel, soundLabel, settingsSave, settingsClose);
+  themeLabelm.append(themeToggle);
+  settingsModal.append(
+    themeLabel,
+    themeToggle,
+    soundLabel,
+    settingsSave,
+    settingsClose,
+  );
 
   app.append(settingsModal, resultModal, statModal);
 
@@ -347,6 +378,7 @@ export function buildUI(root) {
       if (val == null) btn.setAttribute("disabled", "");
       if (state.selectedIndices.includes(i))
         btn.classList.add("cell--selected");
+      btn.addEventListener("click", () => onCellClick(i));
       grid.appendChild(btn);
     }
     gameGrid.appendChild(grid);
@@ -383,6 +415,28 @@ export function buildUI(root) {
 
   function applyTheme(theme) {
     document.documentElement.setAttribute("data-theme", theme);
+  }
+
+  function onCellClick(idx) {
+    const val = state.grid[idx];
+    if (val == null) return;
+    const sel = state.selectedIndices;
+    const pos = sel.indexOf(idx);
+    if (pos >= 0) {
+      sel.splice(pos, 1);
+    } else {
+      if (sel.length >= 2) sel.length = 0;
+      sel.push(idx);
+      if (sel.length === 2) {
+        const [a, b] = sel;
+        if (isPairValid(state, a, b) && applyPair(state, a, b)) {
+          sel.length = 0;
+          renderGrid();
+          return;
+        }
+      }
+    }
+    renderGrid();
   }
 
   // buttons
