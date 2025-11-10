@@ -20,12 +20,24 @@
 }
 @media (max-width: v.$tablet_l) {
   html {
-    font-size: 12px;
+    font-size: 2.8vw;
   }
 }
 
 @media (max-width: v.$mobile_l) {
   html {
-    font-size: 10px;
+    font-size: 2.8vw;
+  }
+}
+@media (orientation: landscape) and (max-width: v.$desktop) {
+  html {
+    font-size: 1vw;
+  }
+} 
+
+@media (orientation: portrait) {
+
+  html {
+    font-size: 2.8vw;
   }
 }

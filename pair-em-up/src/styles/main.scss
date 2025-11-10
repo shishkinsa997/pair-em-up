@@ -20,7 +20,7 @@
 
 html {
   scroll-behavior: smooth;
-  font-size: 20px;
+  font-size: 18px;
 }
 
 body {
@@ -55,7 +55,7 @@ button {
 .main {
   @include flex-column;
   justify-content: start;
-  height: 90vh;
+  height: 95vh;
   gap: 2rem;
 }
 
@@ -143,6 +143,12 @@ button {
 }
 
 // game screen
+
+.game__container {
+  position: relative;
+  height: 100vh;
+}
+
 .mode__title {
   font-size: 2rem;
   margin: 1rem 0;
@@ -155,6 +161,40 @@ button {
   margin-bottom: 0.5rem;
 }
 
+.game__grid {
+  position: relative;
+  z-index: 2;
+  max-height: 100%;
+  height: fit-content;
+    border: 0.2rem solid v.$color-primary;
+
+  .cells {
+    position: relative;
+    @include no-scroll;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: repeat(9, 1fr);
+    grid-template-rows: 3.5rem repeat(9, 1fr);
+    width: 100%;
+    height: fit-content;
+    max-height: calc(100vh - 18em);
+    border: 0.2rem solid v.$color-primary;
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    pointer-events: none;
+    z-index: 11;
+    display: block;
+    bottom: 0;
+    width: 100%;
+    height: 8rem;
+    background-color: #eee;
+    background: linear-gradient(to top, v.$color-black 0%, v.$color-black 20%, #00000000 100%);
+  }
+}
+
 .game__continue {
   all: unset;
   @include button;
@@ -163,46 +203,73 @@ button {
 .controls, .helpers {
   @include flex-between;
   justify-content: space-evenly;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 1rem;
-  margin-top: 1rem;
+  margin-top: 1.5rem;
 }
 
 .controls {
+  // position: absolute;
+  @include flex-between;
   @include btn-section;
   width: 100%;
   max-width: 100%;
-  justify-content: space-between;
-  margin-top: 2rem;
   margin-left: auto;
   margin-right: auto;
-  // margin-bottom: 2rem;
+  padding: 0.8rem;
+  bottom: 0
 }
 
 .settings__modal {
   @include modal;
-  background-color: v.$color-black;
-  // background-color: white;
 
-  .settings__sound {
+  .settings__inner-container, .settings__btn-container {
+    @include flex-between;
+    @include btn-section;
+    background-color: v.$color-dark;
+    border-radius: 1rem;
+    max-width: 30rem;
+    width: 100%;
+    gap: 2rem;
+  }
+
+  .settings__sound, .settings__theme {
     @include checkbox;
   }
 }
 
-.cells {
-  width: 100%;
-  display: grid;
-  overflow-y: auto;
-  grid-template-columns: repeat(9, 1fr);
-  // border: 0.2rem solid v.$color-primary;
-  border-radius: 0.1rem;
-  // gap: 0.4rem;
+.stat__modal {
+  @include modal;
+
+  .stat__inner-container {
+    @include flex-column;
+    @include btn-section;
+    background-color: v.$color-dark;
+    border-radius: 1rem;
+    max-width: 30rem;
+    width: 100%;
+    gap: 2rem;
+  }
+}
+
+.result__modal {
+  @include modal;
+
+  .result__inner-container {
+    @include flex-column;
+    @include btn-section;
+    background-color: v.$color-dark;
+    border-radius: 1rem;
+    max-width: 30rem;
+    width: 100%;
+    gap: 2rem;
+  }
 }
 
 .cell {
   @include flex-center;
-  min-height: 3.5rem;
-  min-width: 3.5rem;
+  height: 3.5rem;
+  width: 3.5rem;
   background: v.$color-black;
   font-size: 1rem;
   color: v.$color-white;
@@ -223,7 +290,7 @@ button {
 .cell--selected {
   background: v.$color-primary;
   color: v.$color-black;
-  box-shadow: 0 0 0 0.2rem v.$color-primary-op inset;
+  box-shadow: 0 0 0 0.2rem v.$color-primary-50 inset;
 }
 
 .cell[disabled] {
@@ -264,11 +331,6 @@ button {
   cursor: not-allowed;
 }
 
-.result__modal,
-.stat__modal {
-  @include modal;
-}
-
 .result__text {
   font-size: 1.2rem;
 }
@@ -280,7 +342,7 @@ button {
 // theme
 [data-theme="light"] body,
 [data-theme="light"] {
-  background: v.$color-white;
+  // background: v.$color-white;
   color: v.$color-black;
 }
 
