@@ -174,10 +174,10 @@ button {
     z-index: 1;
     display: grid;
     grid-template-columns: repeat(9, 1fr);
-    grid-template-rows: 3.5rem repeat(9, 1fr);
+    grid-template-rows: 2.5rem repeat(9, 1fr);
     width: 100%;
     height: fit-content;
-    max-height: calc(100vh - 18em);
+    max-height: calc(100vh - 20em);
     border: 0.2rem solid v.$color-primary;
   }
 
@@ -203,7 +203,7 @@ button {
 .controls, .helpers {
   @include flex-between;
   justify-content: space-evenly;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
   gap: 1rem;
   margin-top: 1.5rem;
 }
@@ -213,7 +213,7 @@ button {
   @include flex-between;
   @include btn-section;
   width: 100%;
-  max-width: 100%;
+  // max-width: 100%;
   margin-left: auto;
   margin-right: auto;
   padding: 0.8rem;
@@ -223,16 +223,6 @@ button {
 .settings__modal {
   @include modal;
 
-  .settings__inner-container, .settings__btn-container {
-    @include flex-between;
-    @include btn-section;
-    background-color: v.$color-dark;
-    border-radius: 1rem;
-    max-width: 30rem;
-    width: 100%;
-    gap: 2rem;
-  }
-
   .settings__sound, .settings__theme {
     @include checkbox;
   }
@@ -241,14 +231,9 @@ button {
 .stat__modal {
   @include modal;
 
-  .stat__inner-container {
+  .stat__list {
     @include flex-column;
-    @include btn-section;
-    background-color: v.$color-dark;
-    border-radius: 1rem;
-    max-width: 30rem;
-    width: 100%;
-    gap: 2rem;
+    gap: 1rem !important;
   }
 }
 
@@ -268,8 +253,8 @@ button {
 
 .cell {
   @include flex-center;
-  height: 3.5rem;
-  width: 3.5rem;
+  height: 2.5rem;
+  width: 2.5rem;
   background: v.$color-black;
   font-size: 1rem;
   color: v.$color-white;

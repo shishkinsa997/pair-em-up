@@ -111,6 +111,16 @@
     gap: 1rem;
     border-radius: 1rem;
     background-color: v.$color-dark-80;
+
+    .modal-inner-container {
+      @include flex-between;
+      @include btn-section;
+      background-color: v.$color-dark;
+      border-radius: 1rem;
+      max-width: 30rem;
+      width: 100%;
+      gap: 2rem;
+    }
   }
 }
 

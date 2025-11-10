@@ -205,7 +205,7 @@ export function buildUI(root) {
     attrs: { type: "button" },
     text: "Results",
   });
-  controls.append(restartBtn, saveBtn, continueBtn, resultBtn, settingsGameBtn);
+  controls.append(restartBtn, saveBtn, continueBtn, settingsGameBtn);
 
   // helpers
   const helpers = el("div", {
@@ -304,6 +304,7 @@ export function buildUI(root) {
   })
   const resultText = el("p", { className: "result__text", text: "" });
   const resultScore = el("p", { className: "result__score", text: "" });
+  const resultBtnContainer = el("div", { className: "modal-inner-container" });
   const playAgain = el("button", {
     className: "play__again  btn",
     attrs: { type: "button" },
@@ -314,7 +315,8 @@ export function buildUI(root) {
     attrs: { type: "button" },
     text: "Main Menu",
   });
-  resultContainer.append(resultText, resultScore, playAgain, toMenu);
+  resultContainer.append(resultText, resultScore, resultBtnContainer);
+  resultBtnContainer.append(playAgain, toMenu);
   resultModal.append(resultContainer);
 
   // statistics modal
@@ -327,10 +329,10 @@ export function buildUI(root) {
   })
   const statTitle = el("h2", {
     className: "stat__title",
-    text: "Latest 5 games (fastest first)",
+    text: "Scoreboard",
   });
   const statList = el("ol", {
-    className: "stat__list stat__inner-container",
+    className: "stat__list modal-inner-container",
   });
   const closeStat = el("button", {
     className: "close__stat btn",
@@ -349,7 +351,7 @@ export function buildUI(root) {
     className: "settings__container modal-container",
   });
   const themeLabel = el("label", {
-    className: "settings__inner-container",
+    className: "modal-inner-container",
     text: "Theme: ",
   });
   const themeToggle = el("div", {
@@ -365,7 +367,7 @@ export function buildUI(root) {
   themeToggle.append(themeInput, themeMark);
 
   const soundLabel = el("label", {
-    className: "settings__inner-container",
+    className: "modal-inner-container",
     text: "Sound: ",
   });
   const soundToggle = el("div", {
@@ -390,7 +392,7 @@ export function buildUI(root) {
     attrs: { type: "button" },
   });
   const settingsBtnContainer = el("div", {
-    className: "settings__btn-container",
+    className: "modal-inner-container",
   })
   themeLabel.append(themeToggle);
   soundLabel.append(soundToggle);
@@ -487,7 +489,6 @@ export function buildUI(root) {
   // settings handlers
   const currentSettings = loadSettings();
   applyTheme(currentSettings.theme);
-  // themeSelect.value = currentSettings.theme;
   themeToggle.checked = !!currentSettings.theme;
   soundToggle.checked = !!currentSettings.sound;
 
@@ -505,6 +506,7 @@ export function buildUI(root) {
     const s = { theme: !!themeId.checked, sound: !!soundToggle.checked };
     saveSettings(s);
     applyTheme(s.theme);
+    settingsModal.setAttribute("hidden", "");
   });
   function applyTheme(theme) {
     const themeClass = theme ? "dark" : "light";
