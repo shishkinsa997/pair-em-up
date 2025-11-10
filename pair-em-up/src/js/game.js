@@ -12,7 +12,7 @@ function generateInitialNumbers(mode) {
     rawBase.filter((x) => x % 10 !== 0);
     if (mode === GAME_MODES.RANDOM) return toSeparateArray(shuffleArray([...rawBase]));
     const base = toSeparateArray(rawBase);
-    let b = 45 - base.length;
+    let b = 63 - base.length;
     if (b <= 0) {
       b = 9 - (base.length - 9 * Math.floor(base.length / 9));
     }

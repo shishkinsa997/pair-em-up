@@ -51,8 +51,8 @@ function addNumbers(state) {
   if (state.rows >= 50) return false;
   let toAdd = [];
   if (state.mode === GAME_MODES.CLASSIC) {
-    // continue sequential numbers after the highest existing sequence baseline
     const existing = state.grid.filter((x) => x != null);
+    console.log(existing);
     const maxVal = existing.length ? Math.max(...existing) : 0;
     const start = Math.max(1, maxVal + 1);
     const seq = [];
@@ -60,16 +60,16 @@ function addNumbers(state) {
     while (seq.length < remaining) {
       seq.push(v);
       v += 1;
-      if (v === 20) v = 1; // skip 0; wrap after 19 to keep digits 1..19
+      if (v === 20) v = 1;
     }
-    toAdd = seq;
+    toAdd = existing;
+    console.log(toAdd);
   } else if (state.mode === GAME_MODES.RANDOM) {
     const nums = [];
     const base = [];
     for (let i = 1; i <= 19; i += 1) base.push(i);
     for (let i = 1; i <= remaining - Math.min(remaining, 19); i += 1)
       base.push((i % 19) + 1);
-    // ensure at least remaining length
     while (nums.length < remaining) nums.push(base[nums.length % base.length]);
     toAdd = shuffleArray(nums);
   } else {
@@ -78,7 +78,7 @@ function addNumbers(state) {
       toAdd.push(1 + Math.floor(Math.random() * 9));
   }
 
-  const newGrid = state.grid.filter((x) => x != null); // compact without empties
+  const newGrid = state.grid.filter((x) => x != null);
   newGrid.push(...toAdd);
   if (computeRows(newGrid.length) > 50) return false;
   state.grid = newGrid;

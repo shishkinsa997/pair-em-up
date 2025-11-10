@@ -47,11 +47,11 @@ export function buildUI(root) {
   });
   const newGameContainer = el("div", {
     className: "new-game-container",
-  })
+  });
   const newGameTitle = el("p", {
     className: "new-game-title",
     text: "New Game",
-  })
+  });
   const modeSection = el("div", {
     className: "mode-section",
   });
@@ -70,7 +70,7 @@ export function buildUI(root) {
     attrs: { type: "button" },
     text: "Chaotic",
   });
-  newGameContainer.append(newGameTitle,modeSection)
+  newGameContainer.append(newGameTitle, modeSection);
   modeSection.append(classicBtn, randomBtn, chaoticBtn);
 
   const startFooter = el("div", {
@@ -199,7 +199,7 @@ export function buildUI(root) {
     className: "game__settings btn",
     attrs: { type: "button" },
     text: "Settings",
-  })
+  });
   const resultBtn = el("button", {
     className: "stat btn",
     attrs: { type: "button" },
@@ -225,7 +225,7 @@ export function buildUI(root) {
       <path d="M4 12H3" stroke="${hintBtnColor}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
       <path d="M5 5L6 6" stroke="${hintBtnColor}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
       <path d="M10 17H14" stroke="${hintBtnColor}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>`
+      </svg>`,
   });
   const revertBtn = el("button", {
     className: "revert btn",
@@ -235,7 +235,7 @@ export function buildUI(root) {
       <svg width="${hintBtnSize}" height="${hintBtnSize}" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M5.33929 4.46777H7.33929V7.02487C8.52931 6.08978 10.0299 5.53207 11.6607 5.53207C15.5267 5.53207 18.6607 8.66608 18.6607 12.5321C18.6607 16.3981 15.5267 19.5321 11.6607 19.5321C9.51025 19.5321 7.58625 18.5623 6.30219 17.0363L7.92151 15.8515C8.83741 16.8825 10.1732 17.5321 11.6607 17.5321C14.4222 17.5321 16.6607 15.2935 16.6607 12.5321C16.6607 9.77065 14.4222 7.53207 11.6607 7.53207C10.5739 7.53207 9.56805 7.87884 8.74779 8.46777L11.3393 8.46777V10.4678H5.33929V4.46777Z"
         fill="${hintBtnColor}"/>
-      </svg>`
+      </svg>`,
   });
   const addNumbersBtn = el("button", {
     className: "add-numbers btn",
@@ -277,7 +277,7 @@ export function buildUI(root) {
     <svg width="${hintBtnSize}" height="${hintBtnSize}" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path fill-rule="evenodd" clip-rule="evenodd" d="M3.49997 12.8995C2.71892 13.6805 2.71892 14.9468 3.49997 15.7279L7.35785 19.5858H4.08576C3.53347 19.5858 3.08576 20.0335 3.08576 20.5858C3.08576 21.1381 3.53347 21.5858 4.08576 21.5858H20.0858C20.638 21.5858 21.0858 21.1381 21.0858 20.5858C21.0858 20.0335 20.638 19.5858 20.0858 19.5858H10.9558L20.4705 10.071C21.2516 9.28999 21.2516 8.02366 20.4705 7.24261L16.2279 2.99997C15.4468 2.21892 14.1805 2.21892 13.3995 2.99997L3.49997 12.8995ZM7.82579 11.4021L4.91418 14.3137L9.15683 18.5563L12.0684 15.6447L7.82579 11.4021ZM9.24 9.98787L13.4826 14.2305L19.0563 8.65683L14.8137 4.41418L9.24 9.98787Z"
       fill="${hintBtnColor}"/>
-    </svg>`
+    </svg>`,
   });
   const eraserCounter = el("span", {
     className: "btn__counter",
@@ -299,6 +299,9 @@ export function buildUI(root) {
     className: "result__modal",
     attrs: { hidden: "" },
   });
+  const resultContainer = el("div", {
+    className: "result__container modal-container",
+  })
   const resultText = el("p", { className: "result__text", text: "" });
   const resultScore = el("p", { className: "result__score", text: "" });
   const playAgain = el("button", {
@@ -311,52 +314,58 @@ export function buildUI(root) {
     attrs: { type: "button" },
     text: "Main Menu",
   });
-  resultModal.append(resultText, resultScore, playAgain, toMenu);
+  resultContainer.append(resultText, resultScore, playAgain, toMenu);
+  resultModal.append(resultContainer);
 
   // statistics modal
   const statModal = el("div", {
     className: "stat__modal",
     attrs: { hidden: "" },
   });
+  const statContainer = el("div", {
+    className: "stat__container modal-container",
+  })
   const statTitle = el("h2", {
     className: "stat__title",
     text: "Latest 5 games (fastest first)",
   });
   const statList = el("ol", {
-    className: "stat__list",
+    className: "stat__list stat__inner-container",
   });
   const closeStat = el("button", {
     className: "close__stat btn",
     attrs: { type: "button" },
     text: "Close",
   });
-  statModal.append(statTitle, statList, closeStat);
+  statContainer.append(statTitle, statList, closeStat);
+  statModal.append(statContainer);
 
   // settings modal
   const settingsModal = el("div", {
     className: "settings__modal",
     attrs: { hidden: "" },
   });
+  const settingsContainer = el("div", {
+    className: "settings__container modal-container",
+  });
   const themeLabel = el("label", {
+    className: "settings__inner-container",
     text: "Theme: ",
   });
-  const themeSelect = el("select", {
-    id: "theme",
+  const themeToggle = el("div", {
+    className: "settings__theme",
   });
-  themeSelect.append(
-    el("option", {
-      attrs: { value: "dark" },
-      text: "Dark",
-    }),
-  );
-  themeSelect.append(
-    el("option", {
-      attrs: { value: "light" },
-      text: "Light",
-    }),
-  );
+  const themeInput = el("input", {
+    id: "theme",
+    attrs: { type: "checkbox", checked: "checked" },
+  });
+  const themeMark = el("div", {
+    className: "settings__sound-mark",
+  });
+  themeToggle.append(themeInput, themeMark);
 
   const soundLabel = el("label", {
+    className: "settings__inner-container",
     text: "Sound: ",
   });
   const soundToggle = el("div", {
@@ -370,20 +379,6 @@ export function buildUI(root) {
   });
   soundToggle.append(soundInput, soundMark);
 
-  const themeLabelm = el("label", {
-    text: "Sound: ",
-  });
-  const themeToggle = el("div", {
-    className: "settings__sound",
-  });
-  const themeInput = el("input", {
-    attrs: { type: "checkbox", checked: "checked" },
-  });
-  const themeMark = el("div", {
-    className: "settings__sound-mark",
-  });
-  themeToggle.append(themeInput, themeMark);
-
   const settingsSave = el("button", {
     className: "settings__save btn",
     text: "Save",
@@ -394,16 +389,18 @@ export function buildUI(root) {
     text: "Close",
     attrs: { type: "button" },
   });
-  themeLabel.append(themeSelect);
+  const settingsBtnContainer = el("div", {
+    className: "settings__btn-container",
+  })
+  themeLabel.append(themeToggle);
   soundLabel.append(soundToggle);
-  themeLabelm.append(themeToggle);
-  settingsModal.append(
+  settingsBtnContainer.append(settingsSave, settingsClose);
+  settingsContainer.append(
     themeLabel,
-    themeToggle,
     soundLabel,
-    settingsSave,
-    settingsClose,
+    settingsBtnContainer,
   );
+  settingsModal.append(settingsContainer);
 
   app.append(settingsModal, resultModal, statModal);
 
@@ -413,7 +410,9 @@ export function buildUI(root) {
   // ux
   function renderGrid() {
     gameGrid.textContent = "";
-    const total = state.grid.length;
+    let total = state.grid.length;
+    if (total < 63) total = 63;
+    total += 9 - (total - 9 * Math.floor(total / 9)) + 9;
     const grid = el("div", {
       className: "cells",
       attrs: {
@@ -440,6 +439,7 @@ export function buildUI(root) {
       btn.addEventListener("click", () => onCellClick(i));
       grid.appendChild(btn);
     }
+    console.log(total);
     gameGrid.appendChild(grid);
   }
 
@@ -487,24 +487,28 @@ export function buildUI(root) {
   // settings handlers
   const currentSettings = loadSettings();
   applyTheme(currentSettings.theme);
-  themeSelect.value = currentSettings.theme;
+  // themeSelect.value = currentSettings.theme;
+  themeToggle.checked = !!currentSettings.theme;
   soundToggle.checked = !!currentSettings.sound;
 
   settingsBtn.addEventListener("click", () => {
     settingsModal.toggleAttribute("hidden");
   });
+  settingsGameBtn.addEventListener("click", () => {
+    settingsModal.toggleAttribute("hidden");
+  });
   settingsClose.addEventListener("click", () => {
     settingsModal.setAttribute("hidden", "");
   });
+  const themeId = document.getElementById('theme');
   settingsSave.addEventListener("click", () => {
-    const s = { theme: themeSelect.value, sound: !!soundToggle.checked };
+    const s = { theme: !!themeId.checked, sound: !!soundToggle.checked };
     saveSettings(s);
     applyTheme(s.theme);
-    settingsModal.setAttribute("hidden", "");
   });
-  console.log(themeSelect.value);
   function applyTheme(theme) {
-    document.documentElement.setAttribute("data-theme", theme);
+    const themeClass = theme ? "dark" : "light";
+    document.documentElement.setAttribute("data-theme", themeClass);
   }
 
   function onCellClick(idx) {
