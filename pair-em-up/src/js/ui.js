@@ -7,6 +7,7 @@ import {
   applyPair,
   checkWin,
   checkLose,
+  checkDraw,
 } from "./game.js";
 import {
   saveToLocalStorage,
@@ -489,7 +490,7 @@ export function buildUI(root) {
       btn.addEventListener("click", () => onCellClick(i));
       grid.appendChild(btn);
     }
-    console.log(total);
+    // console.log(total);
     gameGrid.appendChild(grid);
   }
 
@@ -560,7 +561,7 @@ export function buildUI(root) {
     const s = { theme: !!themeId.checked, sound: !!soundId.checked };
     saveSettings(s);
     applyTheme(s.theme);
-    console.log(s);
+    // console.log(s);
     // settingsModal.setAttribute("hidden", "");
   });
   function applyTheme(theme) {
@@ -583,11 +584,13 @@ export function buildUI(root) {
       if (sel.length === 2) {
         const [a, b] = sel;
         if (isPairValid(state, a, b) && applyPair(state, a, b)) {
+          console.log("valid pair");
           playTone(800, 140);
           sel.length = 0;
           renderGrid();
           updateHud();
           if (checkWin(state)) endGame(true);
+          else if (checkDraw(state)) declareDraw(true);
           else if (checkLose(state)) endGame(false);
           return;
         }
@@ -715,6 +718,7 @@ export function buildUI(root) {
   });
 
   function endGame(win) {
+    console.log("endGame", win);
     stopTimer();
     state.running = false;
     resultText.textContent = win ? "You Win!" : "You Lose";
@@ -731,12 +735,31 @@ export function buildUI(root) {
     });
   }
 
+  function declareDraw(draw) {
+    console.log("draw", draw);
+    stopTimer();
+    state.running = false;
+    resultText.textContent = "Draw!";
+    resultScore.textContent = `Score: ${state.score} • Time: ${formatMs(state.timerMs)}`;
+    resultModal.removeAttribute("hidden");
+    playTone(800);
+    saveResult({
+      mode: state.mode,
+      score: state.score,
+      timeMs: state.timerMs,
+      win: null,
+      draw: true,
+      moves: state.movesMade,
+      at: Date.now(),
+    });
+  }
+
   function renderResults() {
     const list = loadResults();
     statList.textContent = "";
     list.forEach((r) => {
       const li = el("li", {
-        html: `<strong>${r.win ? "Win" : "Loss"}</strong> • ${r.mode} • ${formatMs(r.timeMs)} • ${r.score} pts`,
+        html: `<strong>${r.draw ? "Draw" : ""}${r.win ? "Win" : ""}${!r.win && !r.draw ? "Loss" : ""}</strong> • ${r.mode} • ${formatMs(r.timeMs)} • ${r.score} pts`,
       });
       statList.appendChild(li);
     });

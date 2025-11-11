@@ -26,7 +26,7 @@ function formatMs(ms) {
 let audioCtx = null;
 function playTone(freq = 440, durMs = 120, vol = 0.04) {
   if (!loadSettings().sound) return console.log(loadSettings().sound);
-  console.log(loadSettings().sound);
+  // console.log(loadSettings().sound);
   if (!audioCtx)
     audioCtx = new (window.AudioContext || window.webkitAudioContext)();
   const o = audioCtx.createOscillator();

@@ -124,6 +124,10 @@ function hasAnyMovesLeft(state) {
   return countValidMoves(state) > 0;
 }
 
+function hasAnyCells(state) {
+  return !(state.grid.filter((x) => x != null).length === 0);
+}
+
 function hasAssistsLeft(state) {
   return (
     state.assists.addNumbersUsed < ASSIST_LIMITS.addNumbers ||
@@ -142,6 +146,11 @@ function checkLose(state) {
   return false;
 }
 
+function checkDraw(state) {
+  console.log(!hasAnyCells(state))
+  return !hasAnyCells(state) && !hasAssistsLeft(state);
+}
+
 export {
   GAME_MODES,
   ASSIST_LIMITS,
@@ -150,4 +159,5 @@ export {
   applyPair,
   checkWin,
   checkLose,
+  checkDraw,
 };
