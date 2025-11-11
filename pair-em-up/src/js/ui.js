@@ -301,7 +301,7 @@ export function buildUI(root) {
   });
   const resultContainer = el("div", {
     className: "result__container modal-container",
-  })
+  });
   const resultText = el("p", { className: "result__text", text: "" });
   const resultScore = el("p", { className: "result__score", text: "" });
   const resultBtnContainer = el("div", { className: "modal-inner-container" });
@@ -326,7 +326,7 @@ export function buildUI(root) {
   });
   const statContainer = el("div", {
     className: "stat__container modal-container",
-  })
+  });
   const statTitle = el("h2", {
     className: "stat__title",
     text: "Scoreboard",
@@ -374,7 +374,7 @@ export function buildUI(root) {
       <path d="M3 13.4597C3 17.6241 6.4742 21 10.7598 21C14.0591 21 16.8774 18.9993 18 16.1783C17.1109 16.5841 16.1181 16.8109 15.0709 16.8109C11.2614 16.8109 8.17323 13.8101 8.17323 10.1084C8.17323 8.56025 8.71338 7.13471 9.62054 6C5.87502 6.5355 3 9.67132 3 13.4597Z"
       fill="none" fill-opacity="0"
       stroke="#d2d2d2" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>`
+    </svg>`,
   });
   const themeMarkSun = el("div", {
     className: "settings__theme-mark-sun",
@@ -394,7 +394,7 @@ export function buildUI(root) {
         <path d="M5.85188 18.1477C6.14477 18.4406 6.14477 18.9154 5.85188 19.2083L5.45904 19.6012C5.16615 19.8941 4.69127 19.8941 4.39838 19.6012C4.10549 19.3083 4.10549 18.8334 4.39838 18.5405L4.79122 18.1477C5.08411 17.8548 5.55898 17.8548 5.85188 18.1477Z"
         fill="#1C274C"/>
         </g>
-      </svg>`
+      </svg>`,
   });
   themeToggle.append(themeInput, themeMarkSun, themeMarkMoon);
 
@@ -417,7 +417,7 @@ export function buildUI(root) {
         <path d="M11.38,4.08a1,1,0,0,0-1.09.21L6.59,8H4a2,2,0,0,0-2,2v4a2,2,0,0,0,2,2H6.59l3.7,3.71A1,1,0,0,0,11,20a.84.84,0,0,0,.38-.08A1,1,0,0,0,12,19V5A1,1,0,0,0,11.38,4.08Z"/>
         <path d="M16,15.5a1,1,0,0,1-.71-.29,1,1,0,0,1,0-1.42l5-5a1,1,0,0,1,1.42,1.42l-5,5A1,1,0,0,1,16,15.5Z" />
         <path d="M21,15.5a1,1,0,0,1-.71-.29l-5-5a1,1,0,0,1,1.42-1.42l5,5a1,1,0,0,1,0,1.42A1,1,0,0,1,21,15.5Z" />
-      </svg>`
+      </svg>`,
   });
   const soundMarkOn = el("div", {
     className: "settings__sound-mark-on",
@@ -428,7 +428,7 @@ export function buildUI(root) {
       <path d="M18.36,19.36a1,1,0,0,1-.7-.29,1,1,0,0,1,0-1.41,8,8,0,0,0,0-11.32,1,1,0,0,1,1.41-1.41,10,10,0,0,1,0,14.14A1,1,0,0,1,18.36,19.36Z"/>
       <path d="M15.54,16.54a1,1,0,0,1-.71-.3,1,1,0,0,1,0-1.41,4,4,0,0,0,0-5.66,1,1,0,0,1,1.41-1.41,6,6,0,0,1,0,8.48A1,1,0,0,1,15.54,16.54Z" />
       <path d="M11.38,4.08a1,1,0,0,0-1.09.21L6.59,8H4a2,2,0,0,0-2,2v4a2,2,0,0,0,2,2H6.59l3.7,3.71A1,1,0,0,0,11,20a.84.84,0,0,0,.38-.08A1,1,0,0,0,12,19V5A1,1,0,0,0,11.38,4.08Z"/>
-    </svg>`
+    </svg>`,
   });
   soundToggle.append(soundInput, soundMarkOff, soundMarkOn);
 
@@ -444,15 +444,11 @@ export function buildUI(root) {
   });
   const settingsBtnContainer = el("div", {
     className: "modal-inner-container",
-  })
+  });
   themeLabel.append(themeToggle);
   soundLabel.append(soundToggle);
   settingsBtnContainer.append(settingsSave, settingsClose);
-  settingsContainer.append(
-    themeLabel,
-    soundLabel,
-    settingsBtnContainer,
-  );
+  settingsContainer.append(themeLabel, soundLabel, settingsBtnContainer);
   settingsModal.append(settingsContainer);
 
   app.append(settingsModal, resultModal, statModal);
@@ -500,7 +496,7 @@ export function buildUI(root) {
     currentScore.textContent = `Current Score: ${state.score}`;
     // hints
     const available = countValidMoves(state);
-    hintsCounter.textContent = String(available);
+    hintsCounter.textContent = available >= 6 ? "5+" : String(available);
     modeTitle.textContent =
       state.mode.charAt(0).toUpperCase() + state.mode.slice(1);
     const addLeft = Math.max(0, 10 - state.assists.addNumbersUsed);
@@ -515,6 +511,11 @@ export function buildUI(root) {
     else shuffleBtn.removeAttribute("disabled");
     if (erLeft === 0) eraserBtn.setAttribute("disabled", "");
     else eraserBtn.removeAttribute("disabled");
+    if (state.lastMove && state.lastMove.type === "pair") {
+      revertBtn.removeAttribute("disabled");
+    } else {
+      revertBtn.setAttribute("disabled", "");
+    }
   }
 
   function showStart() {
@@ -552,7 +553,7 @@ export function buildUI(root) {
   settingsClose.addEventListener("click", () => {
     settingsModal.setAttribute("hidden", "");
   });
-  const themeId = document.getElementById('theme');
+  const themeId = document.getElementById("theme");
   settingsSave.addEventListener("click", () => {
     const s = { theme: !!themeId.checked, sound: !!soundToggle.checked };
     saveSettings(s);
@@ -613,6 +614,7 @@ export function buildUI(root) {
     state.timerMs = saved.timerMs || 0;
     state.assists = saved.assists || state.assists;
     state.movesMade = saved.movesMade || 0;
+    state.lastMove = saved.lastMove || null;
     state.selectedIndices = [];
     showGame();
   });
@@ -635,6 +637,7 @@ export function buildUI(root) {
     state.timerMs = saved.timerMs || 0;
     state.assists = saved.assists || state.assists;
     state.movesMade = saved.movesMade || 0;
+    state.lastMove = saved.lastMove || null;
     state.selectedIndices = [];
     renderGrid();
     updateHud();

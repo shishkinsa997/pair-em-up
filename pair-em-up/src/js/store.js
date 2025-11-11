@@ -11,6 +11,7 @@ function saveToLocalStorage(state) {
     timerMs: state.timerMs,
     assists: state.assists,
     movesMade: state.movesMade,
+    lastMove: state.lastMove,
   };
   localStorage.setItem(LS_KEY, JSON.stringify(data));
 }
@@ -55,4 +56,11 @@ function loadSettings() {
   }
 }
 
-export { saveToLocalStorage, loadFromLocalStorage, saveResult, loadResults, saveSettings, loadSettings };
+export {
+  saveToLocalStorage,
+  loadFromLocalStorage,
+  saveResult,
+  loadResults,
+  saveSettings,
+  loadSettings,
+};
