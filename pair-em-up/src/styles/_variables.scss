@@ -1,21 +1,39 @@
+
 $color-primary: #94d6e8;
-$color-light: #F7F5F2;
+$color-light: #e8e8e8;
 $color-dark: #39393A;
 $color-black: #222;
 $color-white: #fff;
 $color-secondary: #fd9282;
+$color-primary-light: #3da1bd;
 
 $color-primary-50: #94d6e850;
 $color-dark-80: #2e2e2ecf;
 $color-dark-50: #2e2e2e50;
 
 $btn-color: #3e3e3e;
-$shadows-btn: 0.6rem 0.6rem 1rem #1c1c1c, -0.6rem -0.6rem 1rem #2f2f2f;
-$shadows-btn-hover: 0.8rem 0.8rem 1.5rem #121212, -0.8rem -0.8rem 1.5rem #303030;
-$shadows-check: 3px 3px 5px #2f2f2f, -3px -3px 5px #1c1c1c;
-$shadows-check-light: 3px 3px 5px #c5c5c5, -3px -3px 5px #ffffff;
-$shadows-check-hover: inset 3px 3px 5px #2f2f2f, inset -3px -3px 5px #1c1c1c;
-$shadows-check-light-hover: inset 3px 3px 5px #c5c5c5, inset -3px -3px 5px #ffffff;
+$btn-color-light: #d2d2d2;
+
+$checkbox-color: #9c9c9c;
+$checkbox-color-light: #9c9c9c;
+
+$shadows-btn: 0.6rem 0.6rem 1rem #1c1c1c,
+              -0.6rem -0.6rem 1rem #2f2f2f;
+$shadows-btn-hover: 0.8rem 0.8rem 1.5rem #121212,
+                    -0.8rem -0.8rem 1.5rem #303030;
+$shadows-btn-light: 0.6rem 0.6rem 1rem #c5c5c5,
+                    -0.6rem -0.6rem 1rem #ffffff;
+$shadows-btn-light-hover: 0.8rem 0.8rem 1.5rem #c5c5c5,
+                          -0.8rem -0.8rem 1.5rem #ffffff;
+
+$shadows-check: 0.2rem 0.2rem 0.2rem #2f2f2f,
+                -0.2rem -0.2rem 0.25rem #1c1c1c;
+$shadows-check-light: 0.2rem 0.2rem 0.25rem #c5c5c5,
+                -0.2rem -0.2rem 0.25rem #ffffff;
+$shadows-check-hover: inset 0.2rem 0.2rem 0.25rem #2f2f2f,
+                      inset -0.2rem -0.2rem 0.25rem #1c1c1c;
+$shadows-check-light-hover: inset 0.2rem 0.2rem 0.25rem #c5c5c5,
+                            inset -0.2rem -0.2rem 0.25rem #ffffff;
 
 $mobile_s: 380px;
 $mobile_m: 560px;

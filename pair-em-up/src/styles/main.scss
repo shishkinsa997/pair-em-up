@@ -28,6 +28,10 @@ body {
   @include background;
   min-height: 100vh;
   color: v.$color-light;
+
+  [data-theme="light"] & {
+    color: v.$color-black;
+  }
 }
 
 #app {
@@ -74,12 +78,17 @@ button {
 }
 
 .continue {
+  @include button;
   width: 100%;
   max-width: 20rem;
   font-size: 1.2rem;
   border-radius: 2rem;
   background-color: v.$color-primary;
   color: v.$color-black;
+
+  [data-theme="light"] & {
+    background-color: v.$color-primary-light;
+  }
 }
 
 .new-game-container {
@@ -108,11 +117,17 @@ button {
   @include icon-btn;
 
   & svg {
-    transition: all 0.5s;
+    transition: transform 0.5s, fill 0.5s;
   }
 
   &:hover svg {
     transform: scale(0.9);
+    fill: #333333;
+  }
+  [data-theme="light"] & svg {
+    fill: v.$color-primary-light;
+  }
+  [data-theme="light"] &:hover svg {
     fill: #333333;
   }
 }
@@ -121,11 +136,18 @@ button {
   @include icon-btn;
 
   & svg {
-    transition: all 0.5s;
+    transition: transform 0.5s, fill 0.5s;
   }
 
   &:hover svg {
     transform: scale(0.9);
+    fill: #333333;
+  }
+
+  [data-theme="light"] & svg {
+    fill: v.$color-primary-light;
+  }
+  [data-theme="light"] &:hover svg {
     fill: #333333;
   }
 }
@@ -134,10 +156,17 @@ button {
   @include icon-btn;
 
   & svg g {
-    transition: all 0.5s;
+    transition: transform 0.5s, stroke 0.5s;
   }
 
   &:hover svg g {
+    stroke: #333333;
+  }
+
+  [data-theme="light"] & svg g {
+    stroke: v.$color-primary-light;
+  }
+  [data-theme="light"] &:hover svg g {
     stroke: #333333;
   }
 }
@@ -166,7 +195,7 @@ button {
   z-index: 2;
   max-height: 100%;
   height: fit-content;
-    border: 0.2rem solid v.$color-primary;
+  border: 0.2rem solid v.$color-primary;
 
   .cells {
     position: relative;
@@ -178,7 +207,6 @@ button {
     width: 100%;
     height: fit-content;
     max-height: calc(100vh - 20em);
-    border: 0.2rem solid v.$color-primary;
   }
 
   &::after {
@@ -192,6 +220,14 @@ button {
     height: 8rem;
     background-color: #eee;
     background: linear-gradient(to top, v.$color-black 0%, v.$color-black 20%, #00000000 100%);
+
+    [data-theme="light"] & {
+      background: linear-gradient(to top, v.$color-light 0%, v.$color-light 20%, #00000000 100%);
+    }
+  }
+
+  [data-theme="light"] & {
+    border: 0.2rem solid v.$color-primary-light;
   }
 }
 
@@ -225,6 +261,14 @@ button {
 
   .settings__sound, .settings__theme {
     @include checkbox;
+
+    .settings__theme-mark-sun, .settings__sound-mark-off {
+      opacity: 1;
+    }
+
+    .settings__theme-mark-moon, .settings__sound-mark-on {
+      opacity: 0;
+    }
   }
 }
 
@@ -292,6 +336,13 @@ button {
 .helpers .eraser {
   @include btn-hint;
   position: relative;
+}
+
+.hints {
+  [data-theme="light"] & svg path {
+    fill: none !important;
+    stroke: v.$color-black;
+  }
 }
 
 .btn__counter,

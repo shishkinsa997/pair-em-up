@@ -35,6 +35,10 @@
   border-radius: 1rem;
   gap: 1rem;
   background-color: v.$color-dark;
+
+  [data-theme="light"] & {
+    background-color: v.$color-light;
+  }
 }
 
 @mixin button {
@@ -48,7 +52,7 @@
   color: v.$color-white;
   padding: 0.5rem 1rem;
   transition: box-shadow ease-in-out 0.3s, background-color ease-in-out 0.1s,
-    letter-spacing ease-in-out 0.1s, transform ease-in-out 0.5s;
+  letter-spacing ease-in-out 0.1s, transform ease-in-out 0.5s;
   box-shadow: v.$shadows-btn;
 
   &:hover {
@@ -60,6 +64,19 @@
     background-color: v.$color-primary;
     transform: scale(0.95);
   }
+
+  [data-theme="light"] & {
+    color: v.$color-black;
+    background-color: v.$btn-color-light;
+    box-shadow: v.$shadows-btn-light;
+    &:hover {
+      box-shadow: v.$shadows-btn-light-hover;
+    }
+    &:active {
+      box-shadow: v.$shadows-btn-light-hover, v.$color-primary-light 0 0 1.5rem 0.25rem;
+      background-color: v.$color-primary-light;
+    }
+  }
 }
 
 @mixin icon-btn {
@@ -70,11 +87,19 @@
   border-radius: 1rem;
   box-shadow: v.$shadows-btn;
   cursor: pointer;
-  transition: all 0.5s;
 
   &:hover {
       transform: scale(0.9);
       box-shadow: v.$shadows-btn-hover;
+  }
+
+  [data-theme="light"] & {
+    background-color: v.$btn-color-light;
+    box-shadow: v.$shadows-btn-light;
+
+    &:hover {
+      box-shadow: v.$shadows-btn-light-hover;
+    }
   }
 }
 
@@ -86,10 +111,18 @@
   border-radius: 50%;
   box-shadow: v.$shadows-btn;
   cursor: pointer;
-  transition: all 0.5s;
+  transition: box-shadow 0.5s;
 
   &:hover {
       box-shadow: v.$shadows-btn-hover;
+  }
+
+  [data-theme="light"] & {
+    background-color: v.$btn-color-light;
+    box-shadow: v.$shadows-btn-light;
+  }
+  [data-theme="light"] & svg path {
+    fill: v.$color-dark;
   }
 }
 
@@ -122,6 +155,10 @@
       gap: 2rem;
     }
   }
+
+  [data-theme="light"] & .modal-container {
+    background: v.$color-light;
+  }
 }
 
 @mixin btn-section {
@@ -132,6 +169,11 @@
   gap: 1rem;
   background-color: v.$color-dark-50;
   box-shadow: v.$shadows-btn;
+
+  [data-theme="light"] & {
+    background-color: v.$color-light;
+    box-shadow: v.$shadows-btn-light;
+  }
 }
 
 @mixin checkbox {
@@ -139,6 +181,7 @@
   position: relative;
   cursor: pointer;
   user-select: none;
+  right: 1rem;
 
   input {
   position: absolute;
@@ -149,45 +192,70 @@
   }
 
   div {
-    position: relative;
+    position: absolute;
+    display: flex;
     top: 0;
     left: 0;
-    height: 1.7em;
-    width: 1.7em;
-    // background-color: #ccc;
+    translate: -50% -50%;
+    height: 1.9em;
+    width: 1.9em;
     border-radius: 100%;
     background: v.$btn-color;
-    // box-shadow: inset 2px 5px 10px rgb(5, 5, 5);
-    // box-shadow: v.$shadows-check;
-    box-shadow: rgba(0, 0, 0, 0.23) 0px -2px 1px 0px inset, rgba(255, 255, 255, 0.17) 0px -1px 1px 0px, rgba(0, 0, 0, 0.17) 0px 2px 4px 1px;
+    box-shadow: rgba(255, 255, 255, 0.17) 0rem -0.15rem 0.15rem 0rem, rgba(0, 0, 0, 0.17) 0rem 0.2rem 0.6rem 0.15rem;
     transition: box-shadow 0.2s ease-in-out;
+    opacity: 0;
+
+    & svg {
+      margin: auto;
+    }
+
+    & svg path {
+      fill: v.$checkbox-color;
+      stroke: v.$checkbox-color;
+    }
+
+    [data-theme="light"] & {
+      box-shadow: 0.2rem 0.2rem 0.3rem #c5c5c5,
+              -0.2rem -0.2rem 0.3rem #ffffff;
+      background: v.$btn-color-light;
+
+      & svg path {
+        fill: v.$checkbox-color ;
+        stroke: v.$checkbox-color;
+      }
+    }
   }
 
   input:checked ~ div {
     // box-shadow: v.$shadows-check-hover;
-    box-shadow: inset 2px 5px 10px rgb(5, 5, 5);
+    box-shadow: inset 0.15rem 0.2rem 0.4rem rgb(5, 5, 5);
+
+    [data-theme="light"] & {
+      box-shadow: inset 0.2rem 0.2rem 0.3rem #c5c5c5,
+              inset -0.15rem -0.2rem 0.3rem #ffffff;
+    }
   }
 
-  div:after {
-    content: "";
-    transition: all 0.2s ease-in-out;
-    position: absolute;
-    opacity: 0;
-  }
+  // div:after {
+  //   content: "";
+  //   transition: transform 0.2s ease-in-out;
+  //   position: absolute;
+  //   opacity: 0;
+  // }
 
-  & input:checked ~ div:after {
+  & input:checked ~ div {
     opacity: 1;
   }
 
-  & div:after {
-    left: 35%;
-    top: 20%;
-    width: 25%;
-    height: 40%;
-    border: solid darkgray;
-    border-width: 0 0.15em 0.15em 0;
-    transform: rotate(45deg);
-  }
+  // & div:after {
+  //   left: 35%;
+  //   top: 20%;
+  //   width: 25%;
+  //   height: 40%;
+  //   border: solid darkgray;
+  //   border-width: 0 0.15em 0.15em 0;
+  //   transform: rotate(45deg);
+  // }
 }
 
 @mixin background {
@@ -202,6 +270,12 @@
   --b-y: calc(var(--my) * -6px);
   --c-x: calc(var(--mx) * 4px);
   --c-y: calc(var(--my) * 4px);
+
+  [data-theme="light"] & {
+    --bg-1: #0000;
+    --bg-2: #e8e8e8;
+    --bg-3: #dfdfdf;
+  }
 
   background:
     repeating-linear-gradient(
