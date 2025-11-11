@@ -1,4 +1,4 @@
-import { el, formatMs } from "./utils.js";
+import { el, formatMs, playTone } from "./utils.js";
 import { state, iconBtnSize, hintBtnSize, hintBtnColor } from "./constants.js";
 import {
   GAME_MODES,
@@ -407,6 +407,7 @@ export function buildUI(root) {
   });
   const soundInput = el("input", {
     attrs: { type: "checkbox", checked: "checked" },
+    id: "sound",
   });
   const soundMarkOff = el("div", {
     className: "settings__sound-mark-off",
@@ -554,10 +555,12 @@ export function buildUI(root) {
     settingsModal.setAttribute("hidden", "");
   });
   const themeId = document.getElementById("theme");
+  const soundId = document.getElementById("sound");
   settingsSave.addEventListener("click", () => {
-    const s = { theme: !!themeId.checked, sound: !!soundToggle.checked };
+    const s = { theme: !!themeId.checked, sound: !!soundId.checked };
     saveSettings(s);
     applyTheme(s.theme);
+    console.log(s);
     // settingsModal.setAttribute("hidden", "");
   });
   function applyTheme(theme) {
@@ -572,12 +575,15 @@ export function buildUI(root) {
     const pos = sel.indexOf(idx);
     if (pos >= 0) {
       sel.splice(pos, 1);
+      playTone(300, 80);
     } else {
       if (sel.length >= 2) sel.length = 0;
       sel.push(idx);
+      playTone(500, 80);
       if (sel.length === 2) {
         const [a, b] = sel;
         if (isPairValid(state, a, b) && applyPair(state, a, b)) {
+          playTone(800, 140);
           sel.length = 0;
           renderGrid();
           updateHud();
@@ -585,6 +591,7 @@ export function buildUI(root) {
           else if (checkLose(state)) endGame(false);
           return;
         }
+        playTone(180, 140);
       }
     }
     renderGrid();
@@ -650,18 +657,21 @@ export function buildUI(root) {
     if (revertLastMove(state)) {
       renderGrid();
       updateHud();
+      playTone(260, 120);
     }
   });
   addNumbersBtn.addEventListener("click", () => {
     if (addNumbers(state)) {
       renderGrid();
       updateHud();
+      playTone(420, 120);
     }
   });
   shuffleBtn.addEventListener("click", () => {
     if (shuffleBoard(state)) {
       renderGrid();
       updateHud();
+      playTone(360, 120);
     }
   });
   eraserBtn.addEventListener("click", () => {
@@ -673,6 +683,7 @@ export function buildUI(root) {
         document.removeEventListener("click", handler, true);
         renderGrid();
         updateHud();
+        playTone(220, 90);
       } else {
         document.removeEventListener("click", handler, true);
       }
@@ -709,6 +720,7 @@ export function buildUI(root) {
     resultText.textContent = win ? "You Win!" : "You Lose";
     resultScore.textContent = `Score: ${state.score} • Time: ${formatMs(state.timerMs)}`;
     resultModal.removeAttribute("hidden");
+    playTone(win ? 900 : 240, 220, 0.06);
     saveResult({
       mode: state.mode,
       score: state.score,
@@ -733,4 +745,8 @@ export function buildUI(root) {
   }
 
   showStart();
+
+  window.addEventListener("beforeunload", () => {
+    saveToLocalStorage(state);
+  });
 }

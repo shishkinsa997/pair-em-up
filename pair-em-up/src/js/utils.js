@@ -1,3 +1,5 @@
+import { loadSettings } from "./store.js";
+
 function el(tag, options = {}) {
   const e = document.createElement(tag);
   if (options.className) e.className = options.className;
@@ -21,4 +23,25 @@ function formatMs(ms) {
   return `${mm}:${ss}`;
 }
 
-export { el, computeRows, formatMs };
+let audioCtx = null;
+function playTone(freq = 440, durMs = 120, vol = 0.04) {
+  if (!loadSettings().sound) return console.log(loadSettings().sound);
+  console.log(loadSettings().sound);
+  if (!audioCtx)
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  const o = audioCtx.createOscillator();
+  const g = audioCtx.createGain();
+  o.frequency.value = freq;
+  o.type = "sine";
+  g.gain.value = vol;
+  o.connect(g);
+  g.connect(audioCtx.destination);
+  o.start();
+  setTimeout(() => {
+    o.stop();
+    o.disconnect();
+    g.disconnect();
+  }, durMs);
+}
+
+export { el, computeRows, formatMs, playTone };

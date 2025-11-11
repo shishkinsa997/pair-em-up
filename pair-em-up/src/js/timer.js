@@ -19,4 +19,4 @@ function stopTimer() {
   timerId = null;
 }
 
-export { startTimer, stopTimer }
+export { startTimer, stopTimer };
