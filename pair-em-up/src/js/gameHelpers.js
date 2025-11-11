@@ -51,27 +51,10 @@ function addNumbers(state) {
   if (state.rows >= 50) return false;
   let toAdd = [];
   if (state.mode === GAME_MODES.CLASSIC) {
-    const existing = state.grid.filter((x) => x != null);
-    console.log(existing);
-    const maxVal = existing.length ? Math.max(...existing) : 0;
-    const start = Math.max(1, maxVal + 1);
-    const seq = [];
-    let v = start;
-    while (seq.length < remaining) {
-      seq.push(v);
-      v += 1;
-      if (v === 20) v = 1;
-    }
-    toAdd = existing;
-    console.log(toAdd);
+    toAdd = state.grid.filter((x) => x != null);
   } else if (state.mode === GAME_MODES.RANDOM) {
-    const nums = [];
-    const base = [];
-    for (let i = 1; i <= 19; i += 1) base.push(i);
-    for (let i = 1; i <= remaining - Math.min(remaining, 19); i += 1)
-      base.push((i % 19) + 1);
-    while (nums.length < remaining) nums.push(base[nums.length % base.length]);
-    toAdd = shuffleArray(nums);
+    const existing = state.grid.filter((x) => x != null);
+    toAdd = shuffleArray(existing);
   } else {
     // CHAOTIC
     for (let i = 0; i < remaining; i += 1)
@@ -96,10 +79,17 @@ function countValidMoves(state) {
   for (let i = 0; i < filled.length; i += 1) {
     for (let j = i + 1; j < filled.length; j += 1) {
       if (isPairValid(state, filled[i], filled[j])) cnt += 1;
-      if (cnt >= 5) return 5;
+      if (cnt >= 6) return 6;
     }
   }
   return cnt;
 }
 
-export { shuffleArray, shuffleBoard, revertLastMove, addNumbers, eraseAt, countValidMoves };
+export {
+  shuffleArray,
+  shuffleBoard,
+  revertLastMove,
+  addNumbers,
+  eraseAt,
+  countValidMoves,
+};
