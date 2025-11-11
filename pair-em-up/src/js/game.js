@@ -1,16 +1,14 @@
 import { GAME_MODES, ASSIST_LIMITS } from "./constants";
-import {
-  shuffleArray,
-  countValidMoves,
-} from "./gameHelpers";
+import { shuffleArray, countValidMoves } from "./gameHelpers";
 import { computeRows } from "./utils";
 
 function generateInitialNumbers(mode) {
   if (mode === GAME_MODES.CLASSIC || mode === GAME_MODES.RANDOM) {
     const rawBase = [];
-    for (let i = 1; i <= 27; i += 1) rawBase.push(i);
+    for (let i = 1; i <= 19; i += 1) rawBase.push(i);
     rawBase.filter((x) => x % 10 !== 0);
-    if (mode === GAME_MODES.RANDOM) return toSeparateArray(shuffleArray([...rawBase]));
+    if (mode === GAME_MODES.RANDOM)
+      return toSeparateArray(shuffleArray([...rawBase]));
     const base = toSeparateArray(rawBase);
     let b = 63 - base.length;
     if (b <= 0) {
@@ -26,7 +24,9 @@ function generateInitialNumbers(mode) {
 }
 
 function toSeparateArray(arr) {
-  return arr.filter((x) => x % 10 !== 0).flatMap((num) => num.toString().split("").map(Number));
+  return arr
+    .filter((x) => x % 10 !== 0)
+    .flatMap((num) => num.toString().split("").map(Number));
 }
 
 function initGame(state, mode) {
