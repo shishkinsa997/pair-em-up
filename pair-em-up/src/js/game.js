@@ -148,7 +148,7 @@ function checkLose(state) {
 
 function checkDraw(state) {
   console.log(!hasAnyCells(state))
-  return !hasAnyCells(state) && !hasAssistsLeft(state);
+  return !hasAnyCells(state);
 }
 
 export {
