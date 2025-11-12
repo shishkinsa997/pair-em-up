@@ -30,6 +30,6 @@ const state = {
 
 const iconBtnSize = '2rem'
 const hintBtnSize = '1.7rem'
-const hintBtnColor = '#fff'
+const svgColor = '#fff'
 
-export { state, GAME_MODES, ASSIST_LIMITS, iconBtnSize, hintBtnSize, hintBtnColor };
+export { state, GAME_MODES, ASSIST_LIMITS, iconBtnSize, hintBtnSize, svgColor };

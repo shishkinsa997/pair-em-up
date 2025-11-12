@@ -1,5 +1,5 @@
 import { el, formatMs, playTone } from "./utils.js";
-import { state, iconBtnSize, hintBtnSize, hintBtnColor } from "./constants.js";
+import { state, iconBtnSize, hintBtnSize, svgColor } from "./constants.js";
 import {
   GAME_MODES,
   initGame,
@@ -77,6 +77,11 @@ export function buildUI(root) {
   const startFooter = el("div", {
     className: "start-footer",
   });
+
+  // Dear reviewer,
+  // this and the following HTML injections are necessary
+  // for managing SVG icon properties
+  // If you know of other ways please write to me
   const github = el("a", {
     className: "github btn",
     attrs: {
@@ -181,32 +186,101 @@ export function buildUI(root) {
   const controls = el("div", {
     className: "controls",
   });
-  const restartBtn = el("button", {
-    className: "restart btn",
+
+  const mainMenuBtn = el("button", {
+    className: "btn-container",
     attrs: { type: "button" },
+    html: `
+    <svg class="btn-icon" width="1.3rem" height="1.3rem" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path fill-rule="evenodd" clip-rule="evenodd" d="M12.2796 3.71579C12.097 3.66261 11.903 3.66261 11.7203 3.71579C11.6678 3.7311 11.5754 3.7694 11.3789 3.91817C11.1723 4.07463 10.9193 4.29855 10.5251 4.64896L5.28544 9.3064C4.64309 9.87739 4.46099 10.0496 4.33439 10.24C4.21261 10.4232 4.12189 10.6252 4.06588 10.8379C4.00765 11.0591 3.99995 11.3095 3.99995 12.169V16C3.99995 16.9456 4.0005 17.6047 4.03569 18.1205C4.07028 18.6275 4.13496 18.9227 4.22832 19.148C4.5328 19.8831 5.11682 20.4672 5.8519 20.7716C6.07729 20.865 6.37249 20.9297 6.8794 20.9643C7.3953 20.9995 8.05439 21 8.99995 21H15C15.9455 21 16.6046 20.9995 17.1205 20.9643C17.6274 20.9297 17.9226 20.865 18.148 20.7716C18.8831 20.4672 19.4671 19.8831 19.7716 19.148C19.8649 18.9227 19.9296 18.6275 19.9642 18.1205C19.9994 17.6047 20 16.9456 20 16V12.169C20 11.3095 19.9923 11.0591 19.934 10.8379C19.878 10.6252 19.7873 10.4232 19.6655 10.24C19.5389 10.0496 19.3568 9.87739 18.7145 9.3064L13.4748 4.64896C13.0806 4.29855 12.8276 4.07463 12.621 3.91817C12.4245 3.7694 12.3321 3.7311 12.2796 3.71579ZM11.1611 1.79556C11.709 1.63602 12.2909 1.63602 12.8388 1.79556C13.2189 1.90627 13.5341 2.10095 13.8282 2.32363C14.1052 2.53335 14.4172 2.81064 14.7764 3.12995L20.0432 7.81159C20.0716 7.83679 20.0995 7.86165 20.1272 7.88619C20.6489 8.34941 21.0429 8.69935 21.3311 9.13277C21.5746 9.49916 21.7561 9.90321 21.8681 10.3287C22.0006 10.832 22.0004 11.359 22 12.0566C22 12.0936 22 12.131 22 12.169V16.0355C22 16.9373 22 17.6647 21.9596 18.2567C21.918 18.8654 21.8305 19.4037 21.6194 19.9134C21.1119 21.1386 20.1385 22.1119 18.9134 22.6194C18.4037 22.8305 17.8654 22.9181 17.2566 22.9596C16.6646 23 15.9372 23 15.0355 23H8.96443C8.06267 23 7.33527 23 6.74326 22.9596C6.13452 22.9181 5.59624 22.8305 5.08654 22.6194C3.8614 22.1119 2.88803 21.1385 2.38056 19.9134C2.16943 19.4037 2.08187 18.8654 2.04033 18.2567C1.99994 17.6647 1.99995 16.9373 1.99995 16.0355L1.99995 12.169C1.99995 12.131 1.99993 12.0936 1.99992 12.0566C1.99955 11.359 1.99928 10.832 2.1318 10.3287C2.24383 9.90321 2.42528 9.49916 2.66884 9.13277C2.95696 8.69935 3.35105 8.34941 3.87272 7.8862C3.90036 7.86165 3.92835 7.83679 3.95671 7.81159L9.22354 3.12996C9.58274 2.81064 9.89467 2.53335 10.1717 2.32363C10.4658 2.10095 10.781 1.90627 11.1611 1.79556Z"
+      fill="${svgColor}"/>
+    </svg>`,
+  });
+  const mainMenuBtnText = el("span", {
+    className: "btn-title",
+    text: "Menu",
+  });
+
+  const restartBtn = el("button", {
+    className: "btn-container",
+    attrs: { type: "button" },
+    html: `
+      <svg class="btn-icon" width="1.3rem" height="1.3rem" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2.99988C16.9706 2.99988 21 7.02931 21 11.9999C21 16.9704 16.9706 20.9999 12 20.9999C7.02944 20.9999 3 16.9704 3 11.9999C3 9.17261 4.30367 6.64983 6.34267 4.99988"
+        stroke="${svgColor}" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/><path d="M3 4.49988H7V8.49988"
+        stroke="${svgColor}" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+      </svg>`,
+  });
+  const restartBtnText = el("span", {
+    className: "btn-title",
     text: "Restart",
   });
+
   const saveBtn = el("button", {
-    className: "save btn",
+    className: "btn-container",
     attrs: { type: "button" },
+    html: `
+    <svg class="btn-icon" width="1.3rem" height="1.3rem" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path fill-rule="evenodd" clip-rule="evenodd" d="M18.1716 1C18.702 1 19.2107 1.21071 19.5858 1.58579L22.4142 4.41421C22.7893 4.78929 23 5.29799 23 5.82843V20C23 21.6569 21.6569 23 20 23H4C2.34315 23 1 21.6569 1 20V4C1 2.34315 2.34315 1 4 1H18.1716ZM4 3C3.44772 3 3 3.44772 3 4V20C3 20.5523 3.44772 21 4 21L5 21L5 15C5 13.3431 6.34315 12 8 12L16 12C17.6569 12 19 13.3431 19 15V21H20C20.5523 21 21 20.5523 21 20V6.82843C21 6.29799 20.7893 5.78929 20.4142 5.41421L18.5858 3.58579C18.2107 3.21071 17.702 3 17.1716 3H17V5C17 6.65685 15.6569 8 14 8H10C8.34315 8 7 6.65685 7 5V3H4ZM17 21V15C17 14.4477 16.5523 14 16 14L8 14C7.44772 14 7 14.4477 7 15L7 21L17 21ZM9 3H15V5C15 5.55228 14.5523 6 14 6H10C9.44772 6 9 5.55228 9 5V3Z"
+      fill="${svgColor}"/>
+    </svg>`,
+  });
+  const saveBtnText = el("span", {
+    className: "btn-title",
     text: "Save",
   });
+
   const continueBtn = el("button", {
-    className: "continue btn",
+    className: "btn-container",
     attrs: { type: "button" },
+    html: `
+    <svg class="btn-icon" width="1.3rem" height="1.3rem" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path fill-rule="evenodd" clip-rule="evenodd" d="M5.46484 3.92349C4.79896 3.5739 4 4.05683 4 4.80888V19.1911C4 19.9432 4.79896 20.4261 5.46483 20.0765L19.1622 12.8854C19.8758 12.5108 19.8758 11.4892 19.1622 11.1146L5.46484 3.92349ZM2 4.80888C2 2.55271 4.3969 1.10395 6.39451 2.15269L20.0919 9.34382C22.2326 10.4677 22.2325 13.5324 20.0919 14.6562L6.3945 21.8473C4.39689 22.8961 2 21.4473 2 19.1911V4.80888Z"
+      fill="${svgColor}"/>
+    </svg>`,
+  });
+  const continueBtnText = el("span", {
+    className: "btn-title",
     text: "Continue",
   });
   const settingsGameBtn = el("button", {
-    className: "game__settings btn",
+    className: "btn-container",
     attrs: { type: "button" },
+    html: `
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="1.3rem" viewBox="0 0 20 20"
+        height="1.3rem" fill="none"
+        class="btn-icon">
+        <g
+          stroke-width="1.5"
+          stroke-linecap="round"
+          stroke="${svgColor}">
+        <circle r="2.5" cy="10" cx="10"></circle>
+        <path fill-rule="evenodd" d="m8.39079 2.80235c.53842-1.51424 2.67991-1.51424 3.21831-.00001.3392.95358 1.4284 1.40477 2.3425.97027 1.4514-.68995 2.9657.82427 2.2758 2.27575-.4345.91407.0166 2.00334.9702 2.34248 1.5143.53842 1.5143 2.67996 0 3.21836-.9536.3391-1.4047 1.4284-.9702 2.3425.6899 1.4514-.8244 2.9656-2.2758 2.2757-.9141-.4345-2.0033.0167-2.3425.9703-.5384 1.5142-2.67989 1.5142-3.21831 0-.33914-.9536-1.4284-1.4048-2.34247-.9703-1.45148.6899-2.96571-.8243-2.27575-2.2757.43449-.9141-.01669-2.0034-.97028-2.3425-1.51422-.5384-1.51422-2.67994.00001-3.21836.95358-.33914 1.40476-1.42841.97027-2.34248-.68996-1.45148.82427-2.9657 2.27575-2.27575.91407.4345 2.00333-.01669 2.34247-.97026z"
+          clip-rule="evenodd">
+        </path>
+        </g>
+      </svg>`,
+  });
+  const settingsGameBtnText = el("span", {
+    className: "btn-title",
     text: "Settings",
   });
-  const resultBtn = el("button", {
-    className: "stat btn",
-    attrs: { type: "button" },
-    text: "Results",
-  });
-  controls.append(restartBtn, saveBtn, continueBtn, settingsGameBtn);
+
+  mainMenuBtn.append(mainMenuBtnText);
+  saveBtn.append(saveBtnText);
+  continueBtn.append(continueBtnText);
+  restartBtn.append(restartBtnText);
+  settingsGameBtn.append(settingsGameBtnText);
+
+  controls.append(
+    mainMenuBtn,
+    saveBtn,
+    continueBtn,
+    restartBtn,
+    settingsGameBtn,
+  );
 
   // helpers
   const helpers = el("div", {
@@ -219,13 +293,13 @@ export function buildUI(root) {
     html: `
       <svg width="${hintBtnSize}" height="${hintBtnSize}" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M12 7C9.23858 7 7 9.23858 7 12C7 13.3613 7.54402 14.5955 8.42651 15.4972C8.77025 15.8484 9.05281 16.2663 9.14923 16.7482L9.67833 19.3924C9.86537 20.3272 10.6862 21 11.6395 21H12.3605C13.3138 21 14.1346 20.3272 14.3217 19.3924L14.8508 16.7482C14.9472 16.2663 15.2297 15.8484 15.5735 15.4972C16.456 14.5955 17 13.3613 17 12C17 9.23858 14.7614 7 12 7Z"
-      stroke="${hintBtnColor}" stroke-width="2"/>
-      <path d="M12 4V3" stroke="${hintBtnColor}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      <path d="M18 6L19 5" stroke="${hintBtnColor}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      <path d="M20 12H21" stroke="${hintBtnColor}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      <path d="M4 12H3" stroke="${hintBtnColor}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      <path d="M5 5L6 6" stroke="${hintBtnColor}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      <path d="M10 17H14" stroke="${hintBtnColor}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      stroke="${svgColor}" stroke-width="2"/>
+      <path d="M12 4V3" stroke="${svgColor}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M18 6L19 5" stroke="${svgColor}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M20 12H21" stroke="${svgColor}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M4 12H3" stroke="${svgColor}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M5 5L6 6" stroke="${svgColor}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M10 17H14" stroke="${svgColor}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>`,
   });
   const revertBtn = el("button", {
@@ -233,9 +307,8 @@ export function buildUI(root) {
     attrs: { type: "button" },
     text: "Revert",
     html: `
-      <svg width="${hintBtnSize}" height="${hintBtnSize}" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M5.33929 4.46777H7.33929V7.02487C8.52931 6.08978 10.0299 5.53207 11.6607 5.53207C15.5267 5.53207 18.6607 8.66608 18.6607 12.5321C18.6607 16.3981 15.5267 19.5321 11.6607 19.5321C9.51025 19.5321 7.58625 18.5623 6.30219 17.0363L7.92151 15.8515C8.83741 16.8825 10.1732 17.5321 11.6607 17.5321C14.4222 17.5321 16.6607 15.2935 16.6607 12.5321C16.6607 9.77065 14.4222 7.53207 11.6607 7.53207C10.5739 7.53207 9.56805 7.87884 8.74779 8.46777L11.3393 8.46777V10.4678H5.33929V4.46777Z"
-        fill="${hintBtnColor}"/>
+      <svg width="${hintBtnSize}" height="${hintBtnSize}" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" ><title>Back SVG Icon</title>
+        <path fill="${svgColor}" d="m4 10l-.707.707L2.586 10l.707-.707zm17 8a1 1 0 1 1-2 0zM8.293 15.707l-5-5l1.414-1.414l5 5zm-5-6.414l5-5l1.414 1.414l-5 5zM4 9h10v2H4zm17 7v2h-2v-2zm-7-7a7 7 0 0 1 7 7h-2a5 5 0 0 0-5-5z"/>
       </svg>`,
   });
   const addNumbersBtn = el("button", {
@@ -245,7 +318,7 @@ export function buildUI(root) {
     html: `
       <svg width="${hintBtnSize}" height="${hintBtnSize}" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M12 4C11.4477 4 11 4.44772 11 5V11H5C4.44772 11 4 11.4477 4 12C4 12.5523 4.44772 13 5 13H11V19C11 19.5523 11.4477 20 12 20C12.5523 20 13 19.5523 13 19V13H19C19.5523 13 20 12.5523 20 12C20 11.4477 19.5523 11 19 11H13V5C13 4.44772 12.5523 4 12 4Z"
-        fill="${hintBtnColor}"/>
+        fill="${svgColor}"/>
       </svg>`,
   });
   const addNumbersCounter = el("span", {
@@ -261,7 +334,7 @@ export function buildUI(root) {
     html: `
       <svg width="${hintBtnSize}" height="${hintBtnSize}" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M16.4697 9.46967C16.1768 9.76256 16.1768 10.2374 16.4697 10.5303C16.7626 10.8232 17.2374 10.8232 17.5303 10.5303L16.4697 9.46967ZM19.5303 8.53033C19.8232 8.23744 19.8232 7.76256 19.5303 7.46967C19.2374 7.17678 18.7626 7.17678 18.4697 7.46967L19.5303 8.53033ZM18.4697 8.53033C18.7626 8.82322 19.2374 8.82322 19.5303 8.53033C19.8232 8.23744 19.8232 7.76256 19.5303 7.46967L18.4697 8.53033ZM17.5303 5.46967C17.2374 5.17678 16.7626 5.17678 16.4697 5.46967C16.1768 5.76256 16.1768 6.23744 16.4697 6.53033L17.5303 5.46967ZM19 8.75C19.4142 8.75 19.75 8.41421 19.75 8C19.75 7.58579 19.4142 7.25 19 7.25V8.75ZM16.7 8L16.6993 8.75H16.7V8ZM12.518 10.252L13.1446 10.6642L13.1446 10.6642L12.518 10.252ZM10.7414 11.5878C10.5138 11.9338 10.6097 12.3989 10.9558 12.6266C11.3018 12.8542 11.7669 12.7583 11.9946 12.4122L10.7414 11.5878ZM11.9946 12.4122C12.2222 12.0662 12.1263 11.6011 11.7802 11.3734C11.4342 11.1458 10.9691 11.2417 10.7414 11.5878L11.9946 12.4122ZM10.218 13.748L9.59144 13.3358L9.59143 13.3358L10.218 13.748ZM6.041 16V16.75H6.04102L6.041 16ZM5 15.25C4.58579 15.25 4.25 15.5858 4.25 16C4.25 16.4142 4.58579 16.75 5 16.75V15.25ZM11.9946 11.5878C11.7669 11.2417 11.3018 11.1458 10.9558 11.3734C10.6097 11.6011 10.5138 12.0662 10.7414 12.4122L11.9946 11.5878ZM12.518 13.748L13.1446 13.3358L13.1446 13.3358L12.518 13.748ZM16.7 16V15.25H16.6993L16.7 16ZM19 16.75C19.4142 16.75 19.75 16.4142 19.75 16C19.75 15.5858 19.4142 15.25 19 15.25V16.75ZM10.7414 12.4122C10.9691 12.7583 11.4342 12.8542 11.7802 12.6266C12.1263 12.3989 12.2222 11.9338 11.9946 11.5878L10.7414 12.4122ZM10.218 10.252L9.59143 10.6642L9.59144 10.6642L10.218 10.252ZM6.041 8L6.04102 7.25H6.041V8ZM5 7.25C4.58579 7.25 4.25 7.58579 4.25 8C4.25 8.41421 4.58579 8.75 5 8.75V7.25ZM17.5303 13.4697C17.2374 13.1768 16.7626 13.1768 16.4697 13.4697C16.1768 13.7626 16.1768 14.2374 16.4697 14.5303L17.5303 13.4697ZM18.4697 16.5303C18.7626 16.8232 19.2374 16.8232 19.5303 16.5303C19.8232 16.2374 19.8232 15.7626 19.5303 15.4697L18.4697 16.5303ZM19.5303 16.5303C19.8232 16.2374 19.8232 15.7626 19.5303 15.4697C19.2374 15.1768 18.7626 15.1768 18.4697 15.4697L19.5303 16.5303ZM16.4697 17.4697C16.1768 17.7626 16.1768 18.2374 16.4697 18.5303C16.7626 18.8232 17.2374 18.8232 17.5303 18.5303L16.4697 17.4697ZM17.5303 10.5303L19.5303 8.53033L18.4697 7.46967L16.4697 9.46967L17.5303 10.5303ZM19.5303 7.46967L17.5303 5.46967L16.4697 6.53033L18.4697 8.53033L19.5303 7.46967ZM19 7.25H16.7V8.75H19V7.25ZM16.7007 7.25C14.7638 7.24812 12.956 8.22159 11.8914 9.8398L13.1446 10.6642C13.9314 9.46813 15.2676 8.74861 16.6993 8.75L16.7007 7.25ZM11.8914 9.83979L10.7414 11.5878L11.9946 12.4122L13.1446 10.6642L11.8914 9.83979ZM10.7414 11.5878L9.59144 13.3358L10.8446 14.1602L11.9946 12.4122L10.7414 11.5878ZM9.59143 13.3358C8.80541 14.5306 7.47115 15.25 6.04098 15.25L6.04102 16.75C7.97596 16.7499 9.78113 15.7767 10.8446 14.1602L9.59143 13.3358ZM6.041 15.25H5V16.75H6.041V15.25ZM10.7414 12.4122L11.8914 14.1602L13.1446 13.3358L11.9946 11.5878L10.7414 12.4122ZM11.8914 14.1602C12.956 15.7784 14.7638 16.7519 16.7007 16.75L16.6993 15.25C15.2676 15.2514 13.9314 14.5319 13.1446 13.3358L11.8914 14.1602ZM16.7 16.75H19V15.25H16.7V16.75ZM11.9946 11.5878L10.8446 9.83979L9.59144 10.6642L10.7414 12.4122L11.9946 11.5878ZM10.8446 9.8398C9.78113 8.2233 7.97596 7.25005 6.04102 7.25L6.04098 8.75C7.47115 8.75004 8.80541 9.46939 9.59143 10.6642L10.8446 9.8398ZM6.041 7.25H5V8.75H6.041V7.25ZM16.4697 14.5303L18.4697 16.5303L19.5303 15.4697L17.5303 13.4697L16.4697 14.5303ZM18.4697 15.4697L16.4697 17.4697L17.5303 18.5303L19.5303 16.5303L18.4697 15.4697Z"
-        fill="${hintBtnColor}"/>
+        fill="${svgColor}"/>
       </svg>`,
   });
   const shuffleCounter = el("span", {
@@ -277,7 +350,7 @@ export function buildUI(root) {
     html: `
     <svg width="${hintBtnSize}" height="${hintBtnSize}" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path fill-rule="evenodd" clip-rule="evenodd" d="M3.49997 12.8995C2.71892 13.6805 2.71892 14.9468 3.49997 15.7279L7.35785 19.5858H4.08576C3.53347 19.5858 3.08576 20.0335 3.08576 20.5858C3.08576 21.1381 3.53347 21.5858 4.08576 21.5858H20.0858C20.638 21.5858 21.0858 21.1381 21.0858 20.5858C21.0858 20.0335 20.638 19.5858 20.0858 19.5858H10.9558L20.4705 10.071C21.2516 9.28999 21.2516 8.02366 20.4705 7.24261L16.2279 2.99997C15.4468 2.21892 14.1805 2.21892 13.3995 2.99997L3.49997 12.8995ZM7.82579 11.4021L4.91418 14.3137L9.15683 18.5563L12.0684 15.6447L7.82579 11.4021ZM9.24 9.98787L13.4826 14.2305L19.0563 8.65683L14.8137 4.41418L9.24 9.98787Z"
-      fill="${hintBtnColor}"/>
+      fill="${svgColor}"/>
     </svg>`,
   });
   const eraserCounter = el("span", {
@@ -532,7 +605,6 @@ export function buildUI(root) {
     }
   }
   function showGame() {
-    continueBtn.classList.add("game__continue");
     startScreen.setAttribute("hidden", "");
     gameScreen.removeAttribute("hidden");
     startTimer();
@@ -557,13 +629,13 @@ export function buildUI(root) {
   });
   const themeId = document.getElementById("theme");
   const soundId = document.getElementById("sound");
+
   settingsSave.addEventListener("click", () => {
     const s = { theme: !!themeId.checked, sound: !!soundId.checked };
     saveSettings(s);
     applyTheme(s.theme);
-    // console.log(s);
-    // settingsModal.setAttribute("hidden", "");
   });
+
   function applyTheme(theme) {
     const themeClass = theme ? "dark" : "light";
     document.documentElement.setAttribute("data-theme", themeClass);
@@ -628,7 +700,11 @@ export function buildUI(root) {
     state.selectedIndices = [];
     showGame();
   });
-
+  mainMenuBtn.addEventListener("click", () => {
+    stopTimer();
+    state.running = false;
+    showStart();
+  });
   restartBtn.addEventListener("click", () => {
     initGame(state, state.mode);
     showGame();
@@ -636,7 +712,7 @@ export function buildUI(root) {
   saveBtn.addEventListener("click", () => {
     saveToLocalStorage(state);
   });
-  continueGameBtn.addEventListener("click", () => {
+  continueBtn.addEventListener("click", () => {
     const saved = loadFromLocalStorage();
     if (!saved) return;
     state.mode = saved.mode;
@@ -711,10 +787,6 @@ export function buildUI(root) {
   toMenu.addEventListener("click", () => {
     resultModal.setAttribute("hidden", "");
     showStart();
-  });
-
-  resultBtn.addEventListener("click", () => {
-    endGame(true);
   });
 
   function endGame(win) {

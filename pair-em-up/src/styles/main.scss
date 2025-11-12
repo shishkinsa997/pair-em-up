@@ -89,6 +89,9 @@ button {
   [data-theme="light"] & {
     background-color: v.$color-primary-light;
   }
+  &[disabled] {
+    display: none;
+  }
 }
 
 .new-game-container {
@@ -236,7 +239,7 @@ button {
   @include button;
 }
 
-.controls, .helpers {
+.helpers {
   @include flex-between;
   justify-content: space-evenly;
   flex-wrap: wrap;
@@ -245,14 +248,13 @@ button {
 }
 
 .controls {
-  // position: absolute;
-  @include flex-between;
-  @include btn-section;
+  @include btn-group;
   width: 100%;
-  // max-width: 100%;
+  margin-top: 1.5rem;
   margin-left: auto;
   margin-right: auto;
-  padding: 0.8rem;
+  padding: 0.5rem;
+  gap: 0.5rem;
   bottom: 0
 }
 
