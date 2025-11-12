@@ -26,7 +26,7 @@ html {
 body {
   @include outfit;
   @include background;
-  min-height: 100vh;
+  min-height: 100dvh;
   color: v.$color-light;
 
   [data-theme="light"] & {
@@ -59,7 +59,7 @@ button {
 .main {
   @include flex-column;
   justify-content: start;
-  height: 95vh;
+  height: 95dvh;
   gap: 2rem;
 }
 
@@ -175,7 +175,7 @@ button {
 
 .game__container {
   position: relative;
-  height: 100vh;
+  height: 100dvh;
 }
 
 .mode__title {
@@ -206,7 +206,7 @@ button {
     grid-template-rows: 2.5rem repeat(9, 1fr);
     width: 100%;
     height: fit-content;
-    max-height: calc(100vh - 20em);
+    max-height: calc(100dvh - 20em);
   }
 
   &::after {

@@ -20,25 +20,25 @@
 }
 @media (max-width: v.$tablet_l) {
   html {
-    font-size: 2.8vw;
+    font-size: 2.8dvw;
   }
 }
 
 @media (max-width: v.$mobile_l) {
   html {
-    font-size: 2.8vw;
+    font-size: 2.8dvw;
   }
 }
 @media (orientation: landscape) and (max-width: v.$desktop) {
   html {
-    font-size: 1.4vw;
+    font-size: 1.4dvw;
   }
 }
 
 @media (orientation: portrait) {
 
   html {
-    font-size: 3.9vw;
+    font-size: 3.9dvw;
   }
     .modal-container {
     min-width: 22rem !important;
