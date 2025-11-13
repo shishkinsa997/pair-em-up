@@ -38,7 +38,7 @@ export function buildUI(root) {
   });
   const startSubtutle = el("p", {
     className: "start__subtitle",
-    text: "Pair 'em Up is a strategic number-matching puzzle game where players must clear a grid by finding and removing valid pairs of numbers.",
+    text: "Pair 'em Up is a strategic number puzzle game where you have to find and connect pairs of numbers according to specific rules.",
   });
 
   const continueGameBtn = el("button", {
@@ -287,7 +287,7 @@ export function buildUI(root) {
     className: "helpers",
   });
   const hintsBtn = el("button", {
-    className: "hints btn",
+    className: "hints",
     attrs: { type: "button" },
     text: "Hints",
     html: `
@@ -302,8 +302,21 @@ export function buildUI(root) {
       <path d="M10 17H14" stroke="${svgColor}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>`,
   });
+  const hintsCounter = el("div", {
+    className: "btn__counter",
+  });
+  const hintsCounterText = el("span", {
+    className: "btn__counter-text",
+    text: "0",
+  });
+  const hintsTooltip = el("span", {
+    className: "tooltip",
+    text: "Number of currently available valid moves",
+  });
+  hintsCounter.append(hintsCounterText, hintsTooltip);
+  hintsBtn.append(hintsCounter);
   const revertBtn = el("button", {
-    className: "revert btn",
+    className: "revert",
     attrs: { type: "button" },
     text: "Revert",
     html: `
@@ -312,7 +325,7 @@ export function buildUI(root) {
       </svg>`,
   });
   const addNumbersBtn = el("button", {
-    className: "add-numbers btn",
+    className: "add-numbers",
     attrs: { type: "button" },
     text: "Add Numbers",
     html: `
@@ -321,13 +334,21 @@ export function buildUI(root) {
         fill="${svgColor}"/>
       </svg>`,
   });
-  const addNumbersCounter = el("span", {
+  const addNumbersCounter = el("div", {
     className: "btn__counter",
+  });
+  const addNumbersCounterText = el("span", {
+    className: "btn__counter-text",
     text: "10",
   });
+  const addNumbersTooltip = el("span", {
+    className: "tooltip",
+    text: "Add numbers to the grid one by one without empty cells in between",
+  });
+  addNumbersCounter.append(addNumbersCounterText, addNumbersTooltip);
   addNumbersBtn.append(addNumbersCounter);
   const shuffleBtn = el("button", {
-    className: "shuffle icon-btn",
+    className: "shuffle",
     id: "shuffle",
     attrs: { type: "button" },
     text: "Shuffle",
@@ -337,13 +358,21 @@ export function buildUI(root) {
         fill="${svgColor}"/>
       </svg>`,
   });
-  const shuffleCounter = el("span", {
+  const shuffleCounter = el("div", {
     className: "btn__counter",
+  });
+  const shuffleCounterText = el("span", {
+    className: "btn__counter-text",
     text: "5",
   });
+  const shuffleTooltip = el("span", {
+    className: "tooltip",
+    text: "Randomly rearranges existing numbers on the board",
+  });
+  shuffleCounter.append(shuffleCounterText, shuffleTooltip);
   shuffleBtn.append(shuffleCounter);
   const eraserBtn = el("button", {
-    className: "eraser btn",
+    className: "eraser",
     id: "eraser",
     attrs: { type: "button" },
     text: "Eraser",
@@ -353,16 +382,19 @@ export function buildUI(root) {
       fill="${svgColor}"/>
     </svg>`,
   });
-  const eraserCounter = el("span", {
+  const eraserCounter = el("div", {
     className: "btn__counter",
+  });
+  const eraserCounterText = el("span", {
+    className: "btn__counter-text",
     text: "5",
   });
-  eraserBtn.append(eraserCounter);
-  const hintsCounter = el("span", {
-    className: "hints__counter",
-    text: "0",
+  const eraserTooltip = el("span", {
+    className: "tooltip",
+    text: "Removes any single number from the grid",
   });
-  hintsBtn.append(hintsCounter);
+  eraserCounter.append(eraserCounterText, eraserTooltip);
+  eraserBtn.append(eraserCounter);
   helpers.append(hintsBtn, revertBtn, addNumbersBtn, shuffleBtn, eraserBtn);
 
   gameContainer.append(modeTitle, hud, gameGrid, helpers, controls);
@@ -563,7 +595,6 @@ export function buildUI(root) {
       btn.addEventListener("click", () => onCellClick(i));
       grid.appendChild(btn);
     }
-    // console.log(total);
     gameGrid.appendChild(grid);
   }
 
@@ -571,15 +602,15 @@ export function buildUI(root) {
     currentScore.textContent = `Current Score: ${state.score}`;
     // hints
     const available = countValidMoves(state);
-    hintsCounter.textContent = available >= 6 ? "5+" : String(available);
+    hintsCounterText.textContent = available >= 6 ? "5+" : String(available);
     modeTitle.textContent =
       state.mode.charAt(0).toUpperCase() + state.mode.slice(1);
     const addLeft = Math.max(0, 10 - state.assists.addNumbersUsed);
     const shLeft = Math.max(0, 5 - state.assists.shuffleUsed);
     const erLeft = Math.max(0, 5 - state.assists.eraserUsed);
-    addNumbersCounter.textContent = String(addLeft);
-    shuffleCounter.textContent = String(shLeft);
-    eraserCounter.textContent = String(erLeft);
+    addNumbersCounterText.textContent = String(addLeft);
+    shuffleCounterText.textContent = String(shLeft);
+    eraserCounterText.textContent = String(erLeft);
     if (addLeft === 0) addNumbersBtn.setAttribute("disabled", "");
     else addNumbersBtn.removeAttribute("disabled");
     if (shLeft === 0) shuffleBtn.setAttribute("disabled", "");
@@ -656,7 +687,6 @@ export function buildUI(root) {
       if (sel.length === 2) {
         const [a, b] = sel;
         if (isPairValid(state, a, b) && applyPair(state, a, b)) {
-          console.log("valid pair");
           playTone(800, 140);
           sel.length = 0;
           renderGrid();
@@ -754,17 +784,22 @@ export function buildUI(root) {
     }
   });
   eraserBtn.addEventListener("click", () => {
+    const eraseBtn = document.getElementById("eraser");
+    eraseBtn.setAttribute("disabled", "");
+
     const handler = (e) => {
       const elCell = e.target.closest(".cell");
       if (!elCell) return;
       const idx = Number(elCell.getAttribute("data-index"));
       if (eraseAt(state, idx)) {
         document.removeEventListener("click", handler, true);
+        eraseBtn.removeAttribute("disabled");
         renderGrid();
         updateHud();
         playTone(220, 90);
       } else {
         document.removeEventListener("click", handler, true);
+        eraseBtn.removeAttribute("disabled");
       }
       e.preventDefault();
       e.stopPropagation();

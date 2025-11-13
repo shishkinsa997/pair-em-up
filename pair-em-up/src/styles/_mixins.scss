@@ -196,19 +196,28 @@
   border-radius: 50%;
   box-shadow: v.$shadows-btn;
   cursor: pointer;
-  transition: box-shadow 0.5s;
+  font-weight: 700;
+  transition: box-shadow ease-in-out 0.3s;
 
   &:hover {
-      box-shadow: v.$shadows-btn-hover;
+    box-shadow: v.$shadows-btn-hover;
   }
 
   [data-theme="light"] & {
     background-color: v.$btn-color-light;
     box-shadow: v.$shadows-btn-light;
+
+    &:hover {
+      box-shadow: v.$shadows-btn-light-hover;
+    }
   }
   [data-theme="light"] & svg path {
     fill: v.$color-dark;
   }
+}
+
+@mixin tooltip {
+
 }
 
 @mixin modal {
@@ -312,7 +321,6 @@
   }
 
   input:checked ~ div {
-    // box-shadow: v.$shadows-check-hover;
     box-shadow: inset 0.15rem 0.2rem 0.4rem rgb(5, 5, 5);
 
     [data-theme="light"] & {
@@ -321,26 +329,9 @@
     }
   }
 
-  // div:after {
-  //   content: "";
-  //   transition: transform 0.2s ease-in-out;
-  //   position: absolute;
-  //   opacity: 0;
-  // }
-
   & input:checked ~ div {
     opacity: 1;
   }
-
-  // & div:after {
-  //   left: 35%;
-  //   top: 20%;
-  //   width: 25%;
-  //   height: 40%;
-  //   border: solid darkgray;
-  //   border-width: 0 0.15em 0.15em 0;
-  //   transform: rotate(45deg);
-  // }
 }
 
 @mixin background {
