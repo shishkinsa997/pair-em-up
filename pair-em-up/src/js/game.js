@@ -86,11 +86,18 @@ function areCellsConnectable(state, aIdx, bIdx) {
   }
 
   // next row
-  const isRowBoundaryPair = ai === cols - 1 && bi === 0 && bj === aj + 1;
-  const isRowBoundaryPairReverse = bi === cols - 1 && ai === 0 && aj === bj + 1;
-  if (isRowBoundaryPair || isRowBoundaryPairReverse) return true;
-
-  return false;
+  if (aj - bj === 1) {
+    for (let i = bIdx + 1; i < aIdx; i += 1) {
+      if (state.grid[i] != null) return false;
+    }
+    return true;
+  }
+  if (bj - aj === 1) {
+    for (let i = aIdx + 1; i < bIdx; i += 1) {
+      if (state.grid[i] != null) return false;
+    }
+    return true;
+  }
 }
 
 function scorePair(a, b) {
