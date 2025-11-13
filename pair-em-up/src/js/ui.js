@@ -539,6 +539,41 @@ export function buildUI(root) {
   });
   soundToggle.append(soundInput, soundMarkOff, soundMarkOn);
 
+  const musicLabel = el("label", {
+    className: "modal-inner-container",
+    text: "Music: ",
+  });
+  const musicToggle = el("div", {
+    className: "settings__music",
+  });
+  const musicInput = el("input", {
+    attrs: { type: "checkbox", checked: "checked" },
+    id: "music",
+  });
+  const musicMarkOff = el("div", {
+    className: "settings__music-mark-off",
+    html: `
+      <svg width="1.3rem" height="1.3rem" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"
+        id="sound-mute-alt"
+        class="icon glyph">
+        <path d="M11.38,4.08a1,1,0,0,0-1.09.21L6.59,8H4a2,2,0,0,0-2,2v4a2,2,0,0,0,2,2H6.59l3.7,3.71A1,1,0,0,0,11,20a.84.84,0,0,0,.38-.08A1,1,0,0,0,12,19V5A1,1,0,0,0,11.38,4.08Z"/>
+        <path d="M16,15.5a1,1,0,0,1-.71-.29,1,1,0,0,1,0-1.42l5-5a1,1,0,0,1,1.42,1.42l-5,5A1,1,0,0,1,16,15.5Z" />
+        <path d="M21,15.5a1,1,0,0,1-.71-.29l-5-5a1,1,0,0,1,1.42-1.42l5,5a1,1,0,0,1,0,1.42A1,1,0,0,1,21,15.5Z" />
+      </svg>`,
+  });
+  const musicMarkOn = el("div", {
+    className: "settings__music-mark-on",
+    html: `
+    <svg width="1.3rem" height="1.3rem" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"
+      id="sound-max"
+      class="icon glyph">
+      <path d="M18.36,19.36a1,1,0,0,1-.7-.29,1,1,0,0,1,0-1.41,8,8,0,0,0,0-11.32,1,1,0,0,1,1.41-1.41,10,10,0,0,1,0,14.14A1,1,0,0,1,18.36,19.36Z"/>
+      <path d="M15.54,16.54a1,1,0,0,1-.71-.3,1,1,0,0,1,0-1.41,4,4,0,0,0,0-5.66,1,1,0,0,1,1.41-1.41,6,6,0,0,1,0,8.48A1,1,0,0,1,15.54,16.54Z" />
+      <path d="M11.38,4.08a1,1,0,0,0-1.09.21L6.59,8H4a2,2,0,0,0-2,2v4a2,2,0,0,0,2,2H6.59l3.7,3.71A1,1,0,0,0,11,20a.84.84,0,0,0,.38-.08A1,1,0,0,0,12,19V5A1,1,0,0,0,11.38,4.08Z"/>
+    </svg>`,
+  });
+  musicToggle.append(musicInput, musicMarkOff, musicMarkOn);
+
   const settingsSave = el("button", {
     className: "settings__save btn",
     text: "Save",
@@ -554,13 +589,44 @@ export function buildUI(root) {
   });
   themeLabel.append(themeToggle);
   soundLabel.append(soundToggle);
+  musicLabel.append(musicToggle);
   settingsBtnContainer.append(settingsSave, settingsClose);
-  settingsContainer.append(themeLabel, soundLabel, settingsBtnContainer);
+  settingsContainer.append(themeLabel, soundLabel, musicLabel, settingsBtnContainer);
   settingsModal.append(settingsContainer);
 
   app.append(settingsModal, resultModal, statModal);
-
   app.append(startScreen, gameScreen);
+
+  const audioPlayer = el("audio", {
+    id: "audio-theme",
+    attrs: {
+      type: "audio/mpeg",
+      controls: "",
+      volume: "0.5",
+      hidden: "",
+    },
+  });
+    const tracks = [
+    "./src/assets/music/cornfield_chase.mp3",
+    "./src/assets/music/day_one.mp3",
+    "./src/assets/music/mountains.mp3",
+    "./src/assets/music/stay.mp3",
+  ];
+  let currentTrack = 0;
+  audioPlayer.src = tracks[currentTrack];
+  audioPlayer.addEventListener("ended", () => {
+    audioPlayer.volume = 0.5;
+    console.log(audioPlayer.volume);
+    currentTrack++;
+    if (currentTrack < tracks.length) {
+      audioPlayer.src = tracks[currentTrack];
+      audioPlayer.play();
+    } else {
+      currentTrack = 0;
+    }
+  });
+
+  root.appendChild(audioPlayer);
   root.appendChild(app);
 
   // ux
@@ -638,6 +704,8 @@ export function buildUI(root) {
   function showGame() {
     startScreen.setAttribute("hidden", "");
     gameScreen.removeAttribute("hidden");
+    audioPlayer.volume = 0.5;
+    if (loadSettings().music) audioPlayer.play();
     startTimer();
     renderGrid();
     updateHud();
@@ -648,6 +716,7 @@ export function buildUI(root) {
   applyTheme(currentSettings.theme);
   themeToggle.checked = !!currentSettings.theme;
   soundToggle.checked = !!currentSettings.sound;
+  musicToggle.checked = !!currentSettings.music;
 
   settingsBtn.addEventListener("click", () => {
     settingsModal.toggleAttribute("hidden");
@@ -660,10 +729,17 @@ export function buildUI(root) {
   });
   const themeId = document.getElementById("theme");
   const soundId = document.getElementById("sound");
+  const musicId = document.getElementById("music");
 
   settingsSave.addEventListener("click", () => {
-    const s = { theme: !!themeId.checked, sound: !!soundId.checked };
+    const s = { theme: !!themeId.checked, sound: !!soundId.checked, music: !!musicId.checked };
     saveSettings(s);
+    if (!s.music) {
+      audioPlayer.pause();
+    } else {
+      audioPlayer.play();
+    }
+    console.log(s.music)
     applyTheme(s.theme);
   });
 

@@ -48,11 +48,11 @@ function saveSettings(settings) {
 }
 function loadSettings() {
   const raw = localStorage.getItem(LS_SETTINGS);
-  if (!raw) return { theme: "dark", sound: true };
+  if (!raw) return { theme: "dark", sound: true, music: true };
   try {
     return JSON.parse(raw);
   } catch {
-    return { theme: "dark", sound: true };
+    return { theme: "dark", sound: true, music: true };
   }
 }
 

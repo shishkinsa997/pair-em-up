@@ -261,14 +261,14 @@ button {
 .settings__modal {
   @include modal;
 
-  .settings__sound, .settings__theme {
+  .settings__sound, .settings__music, .settings__theme {
     @include checkbox;
 
-    .settings__theme-mark-sun, .settings__sound-mark-off {
+    .settings__theme-mark-sun, .settings__sound-mark-off, .settings__music-mark-off {
       opacity: 1;
     }
 
-    .settings__theme-mark-moon, .settings__sound-mark-on {
+    .settings__theme-mark-moon, .settings__sound-mark-on, .settings__music-mark-on {
       opacity: 0;
     }
   }
