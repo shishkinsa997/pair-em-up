@@ -300,20 +300,10 @@
       margin: auto;
     }
 
-    & svg path {
-      fill: v.$checkbox-color;
-      stroke: v.$checkbox-color;
-    }
-
     [data-theme="light"] & {
       box-shadow: 0.2rem 0.2rem 0.3rem #c5c5c5,
               -0.2rem -0.2rem 0.3rem #ffffff;
       background: v.$btn-color-light;
-
-      & svg path {
-        fill: v.$checkbox-color ;
-        stroke: v.$checkbox-color;
-      }
     }
   }
 

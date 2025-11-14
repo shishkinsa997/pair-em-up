@@ -6,18 +6,6 @@ function isTutorialPairValid(state, aIdx, bIdx) {
 
   if (!areTutorialCellsConnectable(state, aIdx, bIdx)) return false;
 
-  // if (step.title.includes("Match Numbers")) {
-  //   return a === b;
-  // } else if (step.title.includes("Make 10")) {
-  //   return a + b === 10;
-  // } else if (step.title.includes("Bonus Pair")) {
-  //   return a === 5 && b === 5;
-  // } else if (step.title.includes("Connectivity")) {
-  //   return a === b;
-  // } else if (step.title.includes("Empty Cells Stay")) {
-  //   return a === b || a + b === 10;
-  // }
-
   return a === b || a + b === 10;
 }
 
@@ -113,7 +101,7 @@ const tutorialSteps = [
     description:
       "Clear the field,\ncollect pairs and score 100+ poins\nwhile moves are available",
     instruction: "If you clear the field of numbers, it will be a draw",
-    grid: ['y', null, null, null, null, null, null, null, null],
+    grid: ['g', 'oo', 'd', null, null, null, 'l', 'ac', 'k'],
     demoComplete: false,
   },
 ];
