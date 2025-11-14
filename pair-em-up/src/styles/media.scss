@@ -40,7 +40,48 @@
   html {
     font-size: 3.9dvw;
   }
-    .modal-container {
+
+  .modal-container {
     min-width: 22rem !important;
+  }
+
+  .tooltip {
+    width: 90dvw !important;
+  }
+
+  .hints {
+    .tooltip {
+      left: -2.3rem;
+      &::after {
+        left: 3rem !important;
+      }
+    }
+  }
+
+  .add-numbers {
+    .tooltip {
+      left: -11.9rem;
+      &::after {
+        left: 12.6rem !important;
+      }
+    }
+  }
+
+  .shuffle {
+    .tooltip {
+      left: -16.7rem;
+      &::after {
+        left: 17.3rem !important;
+      }
+    }
+  }
+
+  .eraser {
+    .tooltip {
+      left: -21.5rem;
+      &::after {
+        left: 22.2rem !important;
+      }
+    }
   }
 }

@@ -347,6 +347,7 @@ button {
   :hover .tooltip {
     visibility: visible;
     opacity: 1;
+    bottom: 2rem;
   }
 
   .tooltip {
@@ -360,20 +361,22 @@ button {
     border-radius: 0.3rem;
     padding: 0.5rem;
     z-index: 9;
-    bottom: 125%;
-    left: 50%;
-    transform: translateX(-50%) translateY(-20%);
+    bottom: 0%;
+    transform: translateY(-20%);
     pointer-events: none;
     font-size: 1rem;
-    transition: opacity 0.3s;
+    transition: all 0.3s;
     &::after {
       content: "";
       position: absolute;
       top: 100%;
       left: 50%;
-      border-width: 0.5rem;
+      border-width: 1rem;
       border-style: solid;
-      border-color: v.$btn-color transparent transparent transparent;
+      border-left: 0.5rem solid transparent;
+      border-right: 0.5rem solid transparent;
+      border-top: 0.8rem solid v.$btn-color;
+      border-bottom: 0 solid transparent ;
       transform: translateX(-50%);
     }
   }
