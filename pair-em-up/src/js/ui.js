@@ -25,6 +25,7 @@ import {
   shuffleBoard,
 } from "./gameHelpers.js";
 import { startTimer, stopTimer } from "./timer.js";
+import { tracks } from "./tracks.js";
 export function buildUI(root) {
   const app = el("div", { id: "app" });
 
@@ -606,12 +607,6 @@ export function buildUI(root) {
       hidden: "",
     },
   });
-    const tracks = [
-    "./src/assets/music/cornfield_chase.mp3",
-    "./src/assets/music/day_one.mp3",
-    "./src/assets/music/mountains.mp3",
-    "./src/assets/music/stay.mp3",
-  ];
   let currentTrack = 0;
   audioPlayer.src = tracks[currentTrack];
   audioPlayer.addEventListener("ended", () => {
@@ -704,7 +699,7 @@ export function buildUI(root) {
   function showGame() {
     startScreen.setAttribute("hidden", "");
     gameScreen.removeAttribute("hidden");
-    audioPlayer.volume = 0.5;
+    audioPlayer.volume = 0.3;
     if (loadSettings().music) audioPlayer.play();
     startTimer();
     renderGrid();
