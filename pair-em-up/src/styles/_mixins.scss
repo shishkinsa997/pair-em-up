@@ -104,9 +104,10 @@
 }
 
 @mixin btn-group {
-  position: relative;
   display: flex;
   justify-content: center;
+  max-width: 22rem;
+  width: 100%;
   border-radius: 10rem;
   background-color: v.$color-dark-50;
   box-shadow: v.$shadows-btn;
@@ -214,10 +215,6 @@
   [data-theme="light"] & svg path {
     fill: v.$color-dark;
   }
-}
-
-@mixin tooltip {
-
 }
 
 @mixin modal {

@@ -398,8 +398,8 @@ export function buildUI(root) {
   eraserBtn.append(eraserCounter);
   helpers.append(hintsBtn, revertBtn, addNumbersBtn, shuffleBtn, eraserBtn);
 
-  gameContainer.append(modeTitle, hud, gameGrid, helpers, controls);
-  gameScreen.append(gameContainer);
+  gameContainer.append(modeTitle, hud, gameGrid, helpers);
+  gameScreen.append(gameContainer, controls);
 
   // result modal
   const resultModal = el("div", {
