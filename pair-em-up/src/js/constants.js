@@ -28,8 +28,15 @@ const state = {
   movesMade: 0,
 };
 
+let tState = {
+  currentTutorialStep: 0,
+  grid: [],
+  selectedIndices: [],
+  score: 0,
+};
+
 const iconBtnSize = '2rem'
 const hintBtnSize = '1.7rem'
 const svgColor = '#fff'
 
-export { state, GAME_MODES, ASSIST_LIMITS, iconBtnSize, hintBtnSize, svgColor };
+export { state, GAME_MODES, ASSIST_LIMITS, iconBtnSize, hintBtnSize, svgColor, tState };

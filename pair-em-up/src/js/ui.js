@@ -1,5 +1,11 @@
 import { el, formatMs, playTone } from "./utils.js";
-import { state, iconBtnSize, hintBtnSize, svgColor } from "./constants.js";
+import {
+  state,
+  iconBtnSize,
+  hintBtnSize,
+  svgColor,
+  tState,
+} from "./constants.js";
 import {
   GAME_MODES,
   initGame,
@@ -26,6 +32,7 @@ import {
 } from "./gameHelpers.js";
 import { startTimer, stopTimer } from "./timer.js";
 import { tracks } from "./tracks.js";
+import { isTutorialPairValid, tutorialSteps } from "./tutorial.js";
 export function buildUI(root) {
   const app = el("div", { id: "app" });
 
@@ -74,7 +81,11 @@ export function buildUI(root) {
   });
   newGameContainer.append(newGameTitle, modeSection);
   modeSection.append(classicBtn, randomBtn, chaoticBtn);
-
+  const tutorialBtn = el("button", {
+    className: "tutorial btn",
+    attrs: { type: "button" },
+    text: "Tutorial",
+  });
   const startFooter = el("div", {
     className: "start-footer",
   });
@@ -151,8 +162,68 @@ export function buildUI(root) {
     startSubtutle,
     continueGameBtn,
     newGameContainer,
+    tutorialBtn,
     startFooter,
   );
+
+  // tutorial screen
+  const tutorialScreen = el("main", {
+    className: "tutorial__screen main",
+    attrs: { hidden: "" },
+  });
+  const tutorialContainer = el("div", {
+    className: "tutorial__container",
+  });
+  const tutorialTitle = el("h1", {
+    className: "tutorial__title",
+  });
+  const tutorialDescription = el("pre", {
+    className: "tutorial__description",
+  });
+  const tutorialInstruction = el("p", {
+    className: "tutorial__instruction",
+  });
+  const tutorialScore = el("p", {
+    className: "tutorial__score",
+    text: "Score: 0",
+  });
+  const tutorialGrid = el("div", {
+    className: "tutorial__grid",
+  });
+  const tutorialNavigation = el("div", {
+    className: "tutorial__navigation",
+  });
+  const prevBtn = el("button", {
+    className: "tutorial__btn btn",
+    attrs: { type: "button" },
+    text: "Previous",
+  });
+  const nextBtn = el("button", {
+    className: "tutorial__btn btn",
+    attrs: { type: "button" },
+    text: "Next",
+  });
+  const startGameBtn = el("button", {
+    className: "tutorial__btn btn",
+    attrs: { type: "button", hidden: "" },
+    text: "Start Game",
+  });
+  const backToMenuBtn = el("button", {
+    className: "tutorial__btn btn",
+    attrs: { type: "button" },
+    text: "Back to Menu",
+  });
+
+  tutorialNavigation.append(prevBtn, nextBtn, startGameBtn, backToMenuBtn);
+  tutorialContainer.append(
+    tutorialTitle,
+    tutorialDescription,
+    tutorialInstruction,
+    tutorialScore,
+    tutorialGrid,
+    tutorialNavigation,
+  );
+  tutorialScreen.append(tutorialContainer);
 
   // game screen
   const gameScreen = el("main", {
@@ -592,11 +663,16 @@ export function buildUI(root) {
   soundLabel.append(soundToggle);
   musicLabel.append(musicToggle);
   settingsBtnContainer.append(settingsSave, settingsClose);
-  settingsContainer.append(themeLabel, soundLabel, musicLabel, settingsBtnContainer);
+  settingsContainer.append(
+    themeLabel,
+    soundLabel,
+    musicLabel,
+    settingsBtnContainer,
+  );
   settingsModal.append(settingsContainer);
 
   app.append(settingsModal, resultModal, statModal);
-  app.append(startScreen, gameScreen);
+  app.append(startScreen, gameScreen, tutorialScreen);
 
   const audioPlayer = el("audio", {
     id: "audio-theme",
@@ -689,6 +765,7 @@ export function buildUI(root) {
     stopTimer();
     startScreen.removeAttribute("hidden");
     gameScreen.setAttribute("hidden", "");
+    tutorialScreen.setAttribute("hidden", "");
     const saved = loadFromLocalStorage();
     if (saved) {
       continueGameBtn.removeAttribute("disabled");
@@ -698,6 +775,7 @@ export function buildUI(root) {
   }
   function showGame() {
     startScreen.setAttribute("hidden", "");
+    tutorialScreen.setAttribute("hidden", "");
     gameScreen.removeAttribute("hidden");
     audioPlayer.volume = 0.3;
     if (loadSettings().music) audioPlayer.play();
@@ -705,6 +783,159 @@ export function buildUI(root) {
     renderGrid();
     updateHud();
   }
+
+  // tutorial
+  function showTutorial() {
+    startScreen.setAttribute("hidden", "");
+    gameScreen.setAttribute("hidden", "");
+    tutorialScreen.removeAttribute("hidden");
+    tState.currentTutorialStep = 0;
+    updateTutorialStep();
+  }
+
+  function renderTutorialGrid(step) {
+    tutorialGrid.textContent = "";
+    if (!step.grid) {
+      tutorialGrid.style.display = "none";
+      return;
+    }
+    tutorialGrid.style.display = "block";
+
+    if (tState.grid.length === 0) {
+      tState.grid = [...step.grid];
+    }
+
+    const grid = el("div", {
+      className: "cells",
+      attrs: {
+        role: "grid",
+      },
+    });
+
+    for (let i = 0; i < 9; i++) {
+      const val = tState.grid[i] ?? null;
+      const isSelected = tState.selectedIndices.includes(i);
+      const btn = el("button", {
+        className: "cell",
+        attrs: {
+          "data-index": String(i),
+          role: "gridcell",
+          "aria-selected": isSelected ? "true" : "false",
+          "aria-label": val != null ? `Cell ${val}` : "Empty cell",
+        },
+        text: val != null ? String(val) : "",
+      });
+
+      if (val == null) {
+        btn.setAttribute("disabled", "");
+      } else {
+        btn.addEventListener("click", () => onTutorialCellClick(i, step));
+      }
+      if (isSelected) {
+        btn.classList.add("cell--selected");
+      }
+      grid.appendChild(btn);
+    }
+    tutorialGrid.appendChild(grid);
+  }
+
+  function onTutorialCellClick(idx, step) {
+    const val = tState.grid[idx];
+    if (val == null) return;
+
+    const sel = tState.selectedIndices;
+    const pos = sel.indexOf(idx);
+
+    if (pos >= 0) {
+      sel.splice(pos, 1);
+      playTone(300, 80);
+    } else {
+      if (sel.length >= 2) sel.length = 0;
+      sel.push(idx);
+      playTone(500, 80);
+
+      if (sel.length === 2) {
+        const [a, b] = sel;
+        const valA = tState.grid[a];
+        const valB = tState.grid[b];
+
+        if (isTutorialPairValid(tState, a, b, step)) {
+          tState.grid[a] = null;
+          tState.grid[b] = null;
+
+          if (valA === 5 && valB === 5) {
+            tState.score += 3;
+          } else if (valA === valB) {
+            tState.score += 1;
+          } else if (valA + valB === 10) {
+            tState.score += 2;
+          }
+          console.log(tState.score);
+          playTone(800, 140);
+          sel.length = 0;
+          step.demoComplete = true;
+          renderTutorialGrid(step);
+          tutorialScore.textContent = `Score: ${tState.score}`;
+          return;
+        }
+        playTone(180, 140);
+      }
+    }
+    renderTutorialGrid(step);
+  }
+
+  function updateTutorialStep() {
+    const step = tutorialSteps[tState.currentTutorialStep];
+    tutorialTitle.textContent = step.title;
+    tutorialDescription.textContent = step.description;
+    tutorialInstruction.textContent = step.instruction;
+
+    tState.grid = [];
+    tState.selectedIndices = [];
+    tState.score = 0;
+    step.demoComplete = false;
+
+    renderTutorialGrid(step);
+
+    if (tState.currentTutorialStep === 0) {
+      prevBtn.setAttribute("disabled", "");
+    } else {
+      prevBtn.removeAttribute("disabled");
+    }
+
+    if (tState.currentTutorialStep === tutorialSteps.length - 1) {
+      nextBtn.setAttribute("hidden", "");
+      startGameBtn.removeAttribute("hidden");
+    } else {
+      nextBtn.removeAttribute("hidden");
+      startGameBtn.setAttribute("hidden", "");
+    }
+  }
+
+  // tutorial handlers
+  prevBtn.addEventListener("click", () => {
+    if (tState.currentTutorialStep > 0) {
+      tState.currentTutorialStep--;
+      updateTutorialStep();
+    }
+  });
+
+  nextBtn.addEventListener("click", () => {
+    if (tState.currentTutorialStep < tutorialSteps.length - 1) {
+      tState.currentTutorialStep++;
+      tutorialScore.textContent = `Score: 0`;
+      updateTutorialStep();
+    }
+  });
+
+  startGameBtn.addEventListener("click", () => {
+    initGame(state, GAME_MODES.CLASSIC);
+    showGame();
+  });
+
+  backToMenuBtn.addEventListener("click", () => {
+    showStart();
+  });
 
   // settings handlers
   const currentSettings = loadSettings();
@@ -727,14 +958,18 @@ export function buildUI(root) {
   const musicId = document.getElementById("music");
 
   settingsSave.addEventListener("click", () => {
-    const s = { theme: !!themeId.checked, sound: !!soundId.checked, music: !!musicId.checked };
+    const s = {
+      theme: !!themeId.checked,
+      sound: !!soundId.checked,
+      music: !!musicId.checked,
+    };
     saveSettings(s);
     if (!s.music) {
       audioPlayer.pause();
     } else {
       audioPlayer.play();
     }
-    console.log(s.music)
+    console.log(s.music);
     applyTheme(s.theme);
   });
 
@@ -800,6 +1035,9 @@ export function buildUI(root) {
     state.lastMove = saved.lastMove || null;
     state.selectedIndices = [];
     showGame();
+  });
+  tutorialBtn.addEventListener("click", () => {
+    showTutorial();
   });
   mainMenuBtn.addEventListener("click", () => {
     stopTimer();

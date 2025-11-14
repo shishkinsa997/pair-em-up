@@ -144,6 +144,7 @@ function hasAssistsLeft(state) {
 }
 
 function checkWin(state) {
+  console.log('Win: ', state.score >= state.targetScore)
   return state.score >= state.targetScore;
 }
 
@@ -154,7 +155,7 @@ function checkLose(state) {
 }
 
 function checkDraw(state) {
-  console.log(!hasAnyCells(state))
+  console.log('Draw: ',!hasAnyCells(state))
   return !hasAnyCells(state);
 }
 
