@@ -848,11 +848,14 @@ export function buildUI(root) {
 
     if (pos >= 0) {
       sel.splice(pos, 1);
-      playTone(300, 80);
+      playTone(440, 70, 0.03);
+      setTimeout(() => playTone(400, 80, 0.03), 70);
+      console.log('отмена выбора');
     } else {
       if (sel.length >= 2) sel.length = 0;
       sel.push(idx);
-      playTone(500, 80);
+      playTone(650, 80, 0.03);
+      console.log('выбор 1');
 
       if (sel.length === 2) {
         const [a, b] = sel;
@@ -870,15 +873,19 @@ export function buildUI(root) {
           } else if (valA + valB === 10) {
             tState.score += 2;
           }
-          console.log(tState.score);
-          playTone(800, 140);
+          // console.log(tState.score);
+          playTone(700, 60, 0.05);
+          setTimeout(() => playTone(850, 70, 0.05), 60);
+          console.log('выбор 2 правильный');
           sel.length = 0;
           step.demoComplete = true;
           renderTutorialGrid(step);
           tutorialScore.textContent = `Score: ${tState.score}`;
           return;
         }
-        playTone(180, 140);
+        playTone(300, 90, 0.05);
+        setTimeout(() => playTone(220, 120, 0.05), 90);
+        console.log('выбор 2 неправильный');
       }
     }
     renderTutorialGrid(step);
@@ -983,17 +990,23 @@ export function buildUI(root) {
     if (val == null) return;
     const sel = state.selectedIndices;
     const pos = sel.indexOf(idx);
+    console.log(idx);
     if (pos >= 0) {
       sel.splice(pos, 1);
-      playTone(300, 80);
+      playTone(440, 70, 0.03);
+      setTimeout(() => playTone(400, 80, 0.03), 70);
+      console.log('отмена выбора');
     } else {
       if (sel.length >= 2) sel.length = 0;
       sel.push(idx);
-      playTone(500, 80);
+      playTone(650, 80, 0.03);
+      console.log('выбор 1');
       if (sel.length === 2) {
         const [a, b] = sel;
         if (isPairValid(state, a, b) && applyPair(state, a, b)) {
-          playTone(800, 140);
+          playTone(700, 60, 0.05);
+          setTimeout(() => playTone(850, 70, 0.05), 60);
+          console.log('выбор 2 правильный');
           sel.length = 0;
           renderGrid();
           updateHud();
@@ -1002,10 +1015,15 @@ export function buildUI(root) {
           else if (checkLose(state)) endGame(false);
           return;
         }
-        playTone(180, 140);
+        playTone(300, 90, 0.05);
+        const el = document.querySelector(`[data-index="${idx}"]`);
+        el.classList.add("wrong");
+        console.log(el);
+        setTimeout(() => playTone(220, 120, 0.05), 90);
+        console.log('выбор 2 неправильный');
       }
     }
-    renderGrid();
+    setTimeout(() => renderGrid(), 200);
   }
 
   // buttons
@@ -1075,21 +1093,27 @@ export function buildUI(root) {
     if (revertLastMove(state)) {
       renderGrid();
       updateHud();
-      playTone(260, 120);
+      playTone(500, 70, 0.04);
+      setTimeout(() => playTone(420, 70, 0.04), 70);
+      setTimeout(() => playTone(500, 70, 0.04), 140);
     }
   });
   addNumbersBtn.addEventListener("click", () => {
     if (addNumbers(state)) {
       renderGrid();
       updateHud();
-      playTone(420, 120);
+      playTone(520, 90, 0.04);
+      setTimeout(() => playTone(620, 110, 0.04), 90);
     }
   });
   shuffleBtn.addEventListener("click", () => {
     if (shuffleBoard(state)) {
       renderGrid();
       updateHud();
-      playTone(360, 120);
+      playTone(500, 60, 0.03);
+      setTimeout(() => playTone(560, 60, 0.03), 60);
+      setTimeout(() => playTone(480, 60, 0.03), 120);
+      setTimeout(() => playTone(540, 60, 0.03), 180);
     }
   });
   eraserBtn.addEventListener("click", () => {
@@ -1105,7 +1129,8 @@ export function buildUI(root) {
         eraseBtn.removeAttribute("disabled");
         renderGrid();
         updateHud();
-        playTone(220, 90);
+        playTone(500, 80, 0.04);
+        setTimeout(() => playTone(350, 100, 0.04), 80);
       } else {
         document.removeEventListener("click", handler, true);
         eraseBtn.removeAttribute("disabled");
@@ -1140,7 +1165,16 @@ export function buildUI(root) {
     resultText.textContent = win ? "You Win!" : "You Lose";
     resultScore.textContent = `Score: ${state.score} • Time: ${formatMs(state.timerMs)}`;
     resultModal.removeAttribute("hidden");
-    playTone(win ? 900 : 240, 220, 0.06);
+    if (win) {
+      playTone(660, 120, 0.05);
+      setTimeout(() => playTone(880, 150, 0.05), 120);
+      setTimeout(() => playTone(990, 200, 0.05), 270);
+    } else {
+      playTone(440, 150, 0.05);
+      setTimeout(() => playTone(330, 180, 0.05), 150);
+      setTimeout(() => playTone(220, 250, 0.05), 330);
+    }
+    // playTone(win ? 900 : 240, 220, 0.06);
     saveResult({
       mode: state.mode,
       score: state.score,
@@ -1158,7 +1192,8 @@ export function buildUI(root) {
     resultText.textContent = "Draw!";
     resultScore.textContent = `Score: ${state.score} • Time: ${formatMs(state.timerMs)}`;
     resultModal.removeAttribute("hidden");
-    playTone(800);
+    playTone(500, 120, 0.04);
+    setTimeout(() => playTone(520, 150, 0.04), 120);
     saveResult({
       mode: state.mode,
       score: state.score,
