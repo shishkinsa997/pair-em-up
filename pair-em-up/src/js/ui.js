@@ -31,7 +31,7 @@ import {
   shuffleBoard,
 } from "./gameHelpers.js";
 import { startTimer, stopTimer } from "./timer.js";
-import { tracks } from "./tracks.js";
+import { paths, trackNames } from "./tracks.js";
 import { isTutorialPairValid, tutorialSteps } from "./tutorial.js";
 export function buildUI(root) {
   const app = el("div", { id: "app" });
@@ -679,18 +679,18 @@ export function buildUI(root) {
     attrs: {
       type: "audio/mpeg",
       controls: "",
-      volume: "0.5",
+      volume: "0.3",
       hidden: "",
     },
   });
   let currentTrack = 0;
-  audioPlayer.src = tracks[currentTrack];
+  audioPlayer.src = paths[currentTrack];
   audioPlayer.addEventListener("ended", () => {
-    audioPlayer.volume = 0.5;
-    console.log(audioPlayer.volume);
+    audioPlayer.volume = 0.3;
     currentTrack++;
-    if (currentTrack < tracks.length) {
-      audioPlayer.src = tracks[currentTrack];
+    if (currentTrack < paths.length) {
+      audioPlayer.src = paths[currentTrack];
+      console.log("Now playing: ", trackNames[currentTrack]);
       audioPlayer.play();
     } else {
       currentTrack = 0;
@@ -778,7 +778,10 @@ export function buildUI(root) {
     tutorialScreen.setAttribute("hidden", "");
     gameScreen.removeAttribute("hidden");
     audioPlayer.volume = 0.3;
-    if (loadSettings().music) audioPlayer.play();
+    if (loadSettings().music) {
+      audioPlayer.play();
+      console.log("Now playing: ", trackNames[currentTrack]);
+    }
     startTimer();
     renderGrid();
     updateHud();
@@ -850,12 +853,12 @@ export function buildUI(root) {
       sel.splice(pos, 1);
       playTone(440, 70, 0.03);
       setTimeout(() => playTone(400, 80, 0.03), 70);
-      console.log('отмена выбора');
+      console.log("отмена выбора");
     } else {
       if (sel.length >= 2) sel.length = 0;
       sel.push(idx);
       playTone(650, 80, 0.03);
-      console.log('выбор 1');
+      console.log("выбор 1");
 
       if (sel.length === 2) {
         const [a, b] = sel;
@@ -876,7 +879,7 @@ export function buildUI(root) {
           // console.log(tState.score);
           playTone(700, 60, 0.05);
           setTimeout(() => playTone(850, 70, 0.05), 60);
-          console.log('выбор 2 правильный');
+          console.log("выбор 2 правильный");
           sel.length = 0;
           step.demoComplete = true;
           renderTutorialGrid(step);
@@ -885,7 +888,7 @@ export function buildUI(root) {
         }
         playTone(300, 90, 0.05);
         setTimeout(() => playTone(220, 120, 0.05), 90);
-        console.log('выбор 2 неправильный');
+        console.log("выбор 2 неправильный");
       }
     }
     renderTutorialGrid(step);
@@ -975,6 +978,7 @@ export function buildUI(root) {
       audioPlayer.pause();
     } else {
       audioPlayer.play();
+      console.log("Now playing: ", trackNames[currentTrack]);
     }
     console.log(s.music);
     applyTheme(s.theme);
@@ -995,18 +999,18 @@ export function buildUI(root) {
       sel.splice(pos, 1);
       playTone(440, 70, 0.03);
       setTimeout(() => playTone(400, 80, 0.03), 70);
-      console.log('отмена выбора');
+      console.log("отмена выбора");
     } else {
       if (sel.length >= 2) sel.length = 0;
       sel.push(idx);
       playTone(650, 80, 0.03);
-      console.log('выбор 1');
+      console.log("выбор 1");
       if (sel.length === 2) {
         const [a, b] = sel;
         if (isPairValid(state, a, b) && applyPair(state, a, b)) {
           playTone(700, 60, 0.05);
           setTimeout(() => playTone(850, 70, 0.05), 60);
-          console.log('выбор 2 правильный');
+          console.log("выбор 2 правильный");
           sel.length = 0;
           renderGrid();
           updateHud();
@@ -1020,7 +1024,7 @@ export function buildUI(root) {
         el.classList.add("wrong");
         console.log(el);
         setTimeout(() => playTone(220, 120, 0.05), 90);
-        console.log('выбор 2 неправильный');
+        console.log("выбор 2 неправильный");
       }
     }
     setTimeout(() => renderGrid(), 200);
