@@ -1256,4 +1256,8 @@ export function buildUI(root) {
   }
 
   showStart();
+  
+  window.addEventListener("beforeunload", () => {
+    saveToLocalStorage(state);
+  });
 }

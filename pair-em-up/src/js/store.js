@@ -28,8 +28,7 @@ function loadFromLocalStorage() {
 function saveResult(entry) {
   const raw = localStorage.getItem(LS_RESULTS);
   const list = raw ? JSON.parse(raw) : [];
-  list.push(entry);
-  list.sort((a, b) => a.timeMs - b.timeMs);
+  list.unshift(entry);
   localStorage.setItem(LS_RESULTS, JSON.stringify(list.slice(0, 5)));
 }
 
