@@ -48,7 +48,7 @@ function eraseAt(state, idx) {
 function addNumbers(state) {
   if (state.assists.addNumbersUsed >= ASSIST_LIMITS.addNumbers) return false;
   const remaining = state.grid.filter((x) => x != null).length;
-  if (state.rows >= 50) return false;
+  // if (state.rows >= 50) return false;
   let toAdd = [];
   if (state.mode === GAME_MODES.CLASSIC) {
     toAdd = state.grid.filter((x) => x != null);
@@ -63,7 +63,7 @@ function addNumbers(state) {
 
   const newGrid = state.grid.filter((x) => x != null);
   newGrid.push(...toAdd);
-  if (computeRows(newGrid.length) > 50) return false;
+  // if (computeRows(newGrid.length) > 50) return false;
   state.grid = newGrid;
   state.rows = computeRows(state.grid.length);
   state.assists.addNumbersUsed += 1;

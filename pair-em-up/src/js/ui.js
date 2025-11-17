@@ -245,7 +245,7 @@ export function buildUI(root) {
   const hud = el("div", { className: "hud" });
   const currentScore = el("p", {
     className: "current__score",
-    text: "Current Score: 0",
+    text: "Score: 0 of 100",
   });
   const timer = el("p", {
     id: "timer",
@@ -735,6 +735,7 @@ export function buildUI(root) {
   // ux
   function renderGrid() {
     gameGrid.textContent = "";
+    if (state.rows > 50) endGame(false);
     let total = state.grid.length;
     if (total < 63) total = 63;
     total += 9 - (total - 9 * Math.floor(total / 9)) + 9;
@@ -768,7 +769,7 @@ export function buildUI(root) {
   }
 
   function updateHud() {
-    currentScore.textContent = `Current Score: ${state.score}`;
+    currentScore.textContent = `Score: ${state.score} of 100`;
     // hints
     const available = countValidMoves(state);
     hintsCounterText.textContent = available >= 6 ? "5+" : String(available);
@@ -983,10 +984,9 @@ export function buildUI(root) {
   // settings handlers
   const currentSettings = loadSettings();
   applyTheme(currentSettings.theme);
-  themeToggle.checked = !!currentSettings.theme;
-  soundToggle.checked = !!currentSettings.sound;
-  musicToggle.checked = !!currentSettings.music;
-
+  themeInput.checked = !!currentSettings.theme;
+  soundInput.checked = !!currentSettings.sound;
+  musicInput.checked = !!currentSettings.music;
   settingsBtn.addEventListener("click", () => {
     settingsModal.toggleAttribute("hidden");
   });
@@ -1140,6 +1140,7 @@ export function buildUI(root) {
       updateHud();
       playTone(520, 90, 0.04);
       setTimeout(() => playTone(620, 110, 0.04), 90);
+      console.log('Rows: ', state.rows);
     }
   });
   shuffleBtn.addEventListener("click", () => {
