@@ -24,23 +24,35 @@ function formatMs(ms) {
 }
 
 let audioCtx = null;
-function playTone(freq = 440, durMs = 120, vol = 0.04) {
-  if (!loadSettings().sound) return console.log(loadSettings().sound);
-  if (!audioCtx)
+function playTone(freq = 440, durMs = 200, vol = 0.05) {
+  if (!loadSettings().sound) return;
+
+  if (!audioCtx) {
     audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  const o = audioCtx.createOscillator();
-  const g = audioCtx.createGain();
-  o.frequency.value = freq;
-  o.type = "sine";
-  g.gain.value = vol;
-  o.connect(g);
-  g.connect(audioCtx.destination);
-  o.start();
-  setTimeout(() => {
-    o.stop();
-    o.disconnect();
-    g.disconnect();
-  }, durMs);
+  }
+
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+
+  osc.type = "triangle";
+  osc.frequency.value = freq;
+
+  const now = audioCtx.currentTime;
+
+  gain.gain.setValueAtTime(0, now);
+  gain.gain.linearRampToValueAtTime(vol, now + 0.02);
+  gain.gain.linearRampToValueAtTime(0, now + durMs / 1000);
+
+  const filter = audioCtx.createBiquadFilter();
+  filter.type = "lowpass";
+  filter.frequency.value = 1800;
+
+  osc.connect(filter);
+  filter.connect(gain);
+  gain.connect(audioCtx.destination);
+
+  osc.start(now);
+  osc.stop(now + durMs / 1000);
 }
 
 export { el, computeRows, formatMs, playTone };

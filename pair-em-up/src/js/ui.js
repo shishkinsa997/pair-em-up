@@ -911,8 +911,7 @@ export function buildUI(root) {
             tState.score += 2;
           }
           // console.log(tState.score);
-          playTone(700, 60, 0.05);
-          setTimeout(() => playTone(850, 70, 0.05), 60);
+          playTone(700, 70, 0.05);
           // console.log("выбор 2 правильный");
           sel.length = 0;
           step.demoComplete = true;
@@ -1042,8 +1041,7 @@ export function buildUI(root) {
       if (sel.length === 2) {
         const [a, b] = sel;
         if (isPairValid(state, a, b) && applyPair(state, a, b)) {
-          playTone(700, 60, 0.05);
-          setTimeout(() => playTone(850, 70, 0.05), 60);
+          playTone(700, 70, 0.05);
           // console.log("выбор 2 правильный");
           sel.length = 0;
           renderGrid();
