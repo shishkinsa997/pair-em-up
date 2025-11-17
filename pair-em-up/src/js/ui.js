@@ -50,7 +50,7 @@ export function buildUI(root) {
   });
 
   const continueGameBtn = el("button", {
-    className: "continue",
+    className: "continue accent-btn",
     attrs: { type: "button" },
     text: "Continue Game",
   });
@@ -199,12 +199,12 @@ export function buildUI(root) {
     text: "Previous",
   });
   const nextBtn = el("button", {
-    className: "tutorial__btn btn",
+    className: "tutorial__btn btn accent-btn",
     attrs: { type: "button" },
     text: "Next",
   });
   const startGameBtn = el("button", {
-    className: "tutorial__btn btn",
+    className: "tutorial__btn btn accent-btn",
     attrs: { type: "button", hidden: "" },
     text: "Start Game",
   });
@@ -484,7 +484,7 @@ export function buildUI(root) {
   const resultScore = el("p", { className: "result__score", text: "" });
   const resultBtnContainer = el("div", { className: "modal-inner-container" });
   const playAgain = el("button", {
-    className: "play__again  btn",
+    className: "btn accent-btn",
     attrs: { type: "button" },
     text: "Play Again",
   });
@@ -647,12 +647,12 @@ export function buildUI(root) {
   musicToggle.append(musicInput, musicMarkOff, musicMarkOn);
 
   const settingsSave = el("button", {
-    className: "settings__save btn",
+    className: "btn accent-btn",
     text: "Save",
     attrs: { type: "button" },
   });
   const settingsClose = el("button", {
-    className: "settings__close btn",
+    className: "btn",
     text: "Close",
     attrs: { type: "button" },
   });
@@ -815,7 +815,7 @@ export function buildUI(root) {
       launchToast();
       console.log("Now playing: ", trackNames[currentTrack]);
     }
-    console.log(audioPlayer.paused);
+    // console.log(audioPlayer.paused);
     startTimer();
     renderGrid();
     updateHud();
@@ -887,12 +887,12 @@ export function buildUI(root) {
       sel.splice(pos, 1);
       playTone(440, 70, 0.03);
       setTimeout(() => playTone(400, 80, 0.03), 70);
-      console.log("отмена выбора");
+      // console.log("отмена выбора");
     } else {
       if (sel.length >= 2) sel.length = 0;
       sel.push(idx);
       playTone(650, 80, 0.03);
-      console.log("выбор 1");
+      // console.log("выбор 1");
 
       if (sel.length === 2) {
         const [a, b] = sel;
@@ -913,7 +913,7 @@ export function buildUI(root) {
           // console.log(tState.score);
           playTone(700, 60, 0.05);
           setTimeout(() => playTone(850, 70, 0.05), 60);
-          console.log("выбор 2 правильный");
+          // console.log("выбор 2 правильный");
           sel.length = 0;
           step.demoComplete = true;
           renderTutorialGrid(step);
@@ -922,7 +922,7 @@ export function buildUI(root) {
         }
         playTone(300, 90, 0.05);
         setTimeout(() => playTone(220, 120, 0.05), 90);
-        console.log("выбор 2 неправильный");
+        // console.log("выбор 2 неправильный");
       }
     }
     renderTutorialGrid(step);
@@ -1014,7 +1014,7 @@ export function buildUI(root) {
       audioPlayer.play();
       console.log("Now playing: ", trackNames[currentTrack]);
     }
-    console.log(s.music);
+    // console.log(s.music);
     applyTheme(s.theme);
   });
 
@@ -1028,23 +1028,23 @@ export function buildUI(root) {
     if (val == null) return;
     const sel = state.selectedIndices;
     const pos = sel.indexOf(idx);
-    console.log(idx);
+    // console.log(idx);
     if (pos >= 0) {
       sel.splice(pos, 1);
       playTone(440, 70, 0.03);
       setTimeout(() => playTone(400, 80, 0.03), 70);
-      console.log("отмена выбора");
+      // console.log("отмена выбора");
     } else {
       if (sel.length >= 2) sel.length = 0;
       sel.push(idx);
       playTone(650, 80, 0.03);
-      console.log("выбор 1");
+      // console.log("выбор 1");
       if (sel.length === 2) {
         const [a, b] = sel;
         if (isPairValid(state, a, b) && applyPair(state, a, b)) {
           playTone(700, 60, 0.05);
           setTimeout(() => playTone(850, 70, 0.05), 60);
-          console.log("выбор 2 правильный");
+          // console.log("выбор 2 правильный");
           sel.length = 0;
           renderGrid();
           updateHud();
@@ -1056,9 +1056,9 @@ export function buildUI(root) {
         playTone(300, 90, 0.05);
         const el = document.querySelector(`[data-index="${idx}"]`);
         el.classList.add("wrong");
-        console.log(el);
+        // console.log(el);
         setTimeout(() => playTone(220, 120, 0.05), 90);
-        console.log("выбор 2 неправильный");
+        // console.log("выбор 2 неправильный");
       }
     }
     setTimeout(() => renderGrid(), 200);
@@ -1197,7 +1197,7 @@ export function buildUI(root) {
   });
 
   function endGame(win) {
-    console.log("endGame", win);
+    // console.log("endGame", win);
     stopTimer();
     state.running = false;
     resultText.textContent = win ? "You Win!" : "You Lose";
