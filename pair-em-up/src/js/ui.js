@@ -692,12 +692,44 @@ export function buildUI(root) {
       audioPlayer.src = paths[currentTrack];
       console.log("Now playing: ", trackNames[currentTrack]);
       audioPlayer.play();
+      launchToast(trackNames[currentTrack]);
     } else {
       currentTrack = 0;
     }
   });
+  const toast = el("div", {
+    className: "toast",
+    attrs: {
+      role: "alert",
+    },
+  });
+  const toastIcon = el("div", {
+    className: "toast__img",
+    attrs: {
+      role: "img",
+    },
+    html: `
+    <svg
+      max-width="1.5rem"
+      max-height="1.5rem" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9.772 4.28c.56-.144 1.097.246 1.206.814.1.517-.263 1.004-.771 1.14A7 7 0 1 0 19 12.9c.009-.5.4-.945.895-1 .603-.067 1.112.371 1.106.977L21 13c0 .107-.002.213-.006.32a.898.898 0 0 1 0 .164l-.008.122a9 9 0 0 1-9.172 8.392A9 9 0 0 1 9.772 4.28z"
+      fill="#ffffffff"/><path d="M15.93 13.753a4.001 4.001 0 1 1-6.758-3.581A4 4 0 0 1 12 9c.75 0 1.3.16 2 .53 0 0 .15.09.25.17-.1-.35-.228-1.296-.25-1.7a58.75 58.75 0 0 1-.025-2.035V2.96c0-.52.432-.94.965-.94.103 0 .206.016.305.048l4.572 1.689c.446.145.597.23.745.353.148.122.258.27.33.446.073.176.108.342.108.801v1.16c0 .518-.443.94-.975.94a.987.987 0 0 1-.305-.049l-1.379-.447-.151-.05c-.437-.14-.618-.2-.788-.26a5.697 5.697 0 0 1-.514-.207 3.53 3.53 0 0 1-.213-.107c-.098-.05-.237-.124-.521-.263L16 6l.011 7c0 .255-.028.507-.082.753h.001z"
+      fill="#ffffffff"/>
+    </svg>`
+  });
+  const toastText = el("div", {
+    className: "toast__text",
+    text: `${trackNames[currentTrack]}`,
+  });
+  function launchToast() {
+    toastText.textContent = `${trackNames[currentTrack]}`;
+    toast.classList.add("toast__show");
+    setTimeout(function () {
+      toast.classList.remove("toast__show");
+    }, 5000);
+  };
+  toast.append(toastIcon, toastText);
 
-  root.appendChild(audioPlayer);
+  root.append(audioPlayer, toast);
   root.appendChild(app);
 
   // ux
@@ -778,10 +810,12 @@ export function buildUI(root) {
     tutorialScreen.setAttribute("hidden", "");
     gameScreen.removeAttribute("hidden");
     audioPlayer.volume = 0.3;
-    if (loadSettings().music) {
+    if (loadSettings().music && audioPlayer.paused) {
       audioPlayer.play();
+      launchToast();
       console.log("Now playing: ", trackNames[currentTrack]);
     }
+    console.log(audioPlayer.paused);
     startTimer();
     renderGrid();
     updateHud();

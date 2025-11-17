@@ -28,7 +28,7 @@ const state = {
   movesMade: 0,
 };
 
-let tState = {
+const tState = {
   currentTutorialStep: 0,
   grid: [],
   selectedIndices: [],
