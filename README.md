@@ -1,7 +1,7 @@
 # Pair 'em Up 🎮
 
 ## Project's Deploy
-- [PPair 'em Up](https://shishkinsa997.github.io/pair-em-up/)
+- [Pair 'em Up](https://shishkinsa997.github.io/pair-em-up/)
 
 ## Table of Contents
 
